@@ -86,6 +86,11 @@ public class TUser implements Serializable , UserDetails {
     private Integer createBy;
 
     /**
+     * 创建人姓名
+     */
+    private String createrName;
+
+    /**
      * 编辑时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -97,6 +102,11 @@ public class TUser implements Serializable , UserDetails {
     private Integer editBy;
 
     /**
+     * 编辑人姓名
+     */
+    private String editorName;
+
+    /**
      * 最近登录时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -105,11 +115,13 @@ public class TUser implements Serializable , UserDetails {
     /**
      * 用户的角色列表
      */
+    @JsonIgnore
     private List<String> roleList;
 
     /**
      * 用户的权限列表（存放权限标识符）
      */
+    @JsonIgnore
     private List<String> permissionList;
 
     // --------------------实现UserDetails接口的7个方法----------------------

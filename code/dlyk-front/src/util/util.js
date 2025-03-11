@@ -1,4 +1,4 @@
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 /**
  * 消息提示
@@ -23,3 +23,20 @@ export function getTokenName(){
     return "dlyk_token";
 }
 
+
+/**
+ * 消息确认提示框
+ * @param msg
+ * @returns {Promise<MessageBoxData>}
+ */
+export function messageConfirm(msg){
+    return ElMessageBox.confirm(
+        msg, //提示语
+        'Warning',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }
+    )
+}

@@ -1,5 +1,5 @@
 import axios from "axios";
-import {getTokenName, messageTip} from "../util/util.js";
+import {getTokenName, messageConfirm, messageTip} from "../util/util.js";
 import {ElMessageBox} from "element-plus";
 
 axios.defaults.baseURL = "http://localhost:8089"
@@ -64,19 +64,14 @@ axios.interceptors.response.use(function (response) {
     // 对响应数据做点什么
     if (response.data.code > 900){
         // code大于900说明token验证失败了
-        ElMessageBox.confirm(
-            response.data.msg + ', 是否重新登录', //提示语
-            'Warning',
-            {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-            }
-        ).then(() => { // 点击确定
+        // 前端响应的jwt有问题，清除这个jwt
+        removeToken();
+        messageConfirm(response.data.msg + ', 是否重新登录').then(() => { // 点击确定
             window.location.href = "/";
         }).catch(() => { // 点击取消
             messageTip("取消登录", "warning")
         })
+        return ;
     }
     return response;
 }, function (error) {

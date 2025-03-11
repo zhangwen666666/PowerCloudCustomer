@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,11 +21,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class TokenVerifyFilter extends OncePerRequestFilter {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
 
     @Override
@@ -52,7 +56,8 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
         }
         // token验证通过, 检查token是否过期
         TUser user = JwtUtil.parseToken(authorization);
-        String redisJwt = (String) redisTemplate.opsForValue().get(Constant.REDIS_TOKEN_KEY + user.getId());
+        String redisKey = Constant.REDIS_TOKEN_KEY + user.getId();
+        String redisJwt = (String) redisTemplate.opsForValue().get(redisKey);
         if (!StringUtils.hasText(redisJwt)){
             // token过期
             R<String> result = R.error(903, "token过期，请重新登录");
@@ -61,7 +66,7 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
             return;
         }
         // 检查前端传过来的token和redis中的是否相等
-        if (!redisJwt.equals(authorization)) {
+        if (!authorization.equals(redisJwt)) {
             // 不相等
             R<String> result = R.error(904, "token不匹配");
             String json = JSONUtils.toJSON(result);
@@ -73,6 +78,23 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(user, null, AuthorityUtils.NO_AUTHORITIES);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        // 刷新token (异步进行)
+        /*new Thread(() -> {
+            Long expire = redisTemplate.getExpire(redisKey, TimeUnit.SECONDS);
+            if (expire < 600L){
+                // redis中过期时间剩余10分钟，则续期
+                redisTemplate.expire(redisKey, expire + 1800L, TimeUnit.SECONDS);
+            }
+        }).start();*/
+        threadPoolTaskExecutor.execute(() -> {
+            long expire = redisTemplate.getExpire(redisKey, TimeUnit.SECONDS);
+            if (expire < 600L){
+                // redis中过期时间剩余10分钟，则续期
+                redisTemplate.expire(redisKey, expire + 1800L, TimeUnit.SECONDS);
+            }
+        });
+
 
         filterChain.doFilter(request, response);
     }

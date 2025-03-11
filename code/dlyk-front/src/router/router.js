@@ -13,6 +13,16 @@ const router = createRouter({
         {
             path: '/dashboard',
             component : () => import('../view/DashboardView.vue'),
+            children : [
+                {
+                    path:"user",// 子路由路径不能以"/"开头
+                    component: () => import('../view/UserView.vue')
+                },
+                {
+                    path: "user/:id", // 动态路由
+                    component: () => import('../view/UserDetailView.vue')
+                }
+            ]
         }
     ]
 })

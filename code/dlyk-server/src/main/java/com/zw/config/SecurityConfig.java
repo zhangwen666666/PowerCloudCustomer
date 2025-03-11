@@ -4,6 +4,7 @@ import com.zw.consts.Constant;
 import com.zw.filter.TokenVerifyFilter;
 import com.zw.handler.MyAuthenticationFailureHandler;
 import com.zw.handler.MyAuthenticationSuccessHandler;
+import com.zw.handler.MyLogoutSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,8 @@ public class SecurityConfig {
     private MyAuthenticationFailureHandler myAuthenticationFailureHandler;
     @Autowired
     private TokenVerifyFilter tokenVerifyFilter;
+    @Autowired
+    private MyLogoutSuccessHandler myLogoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -74,6 +77,9 @@ public class SecurityConfig {
                     t.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .addFilterBefore(tokenVerifyFilter, LogoutFilter.class) // 添加token验证过滤器
+                .logout((logout) -> {
+                    logout.logoutUrl("/api/logout").logoutSuccessHandler(myLogoutSuccessHandler);
+                })
                 .build();
     }
 }

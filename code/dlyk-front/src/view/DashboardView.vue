@@ -14,6 +14,7 @@
           style="border-right: 0px solid"
           :collapse="isCollapse"
           :collapse-transition="false"
+          :router="true"
           :unique-opened="true"
       >
         <!--市场活动菜单-->
@@ -102,7 +103,7 @@
             <el-icon><User /></el-icon>
             <span>用户管理</span>
           </template>
-          <el-menu-item index="1-1">
+          <el-menu-item index="/dashboard/user">
             <el-icon><User /></el-icon>
             用户管理
           </el-menu-item>
@@ -130,19 +131,21 @@
 
         <el-dropdown :hide-on-click="false">
           <span class="el-dropdown-link">
-            Dropdown List<el-icon class="el-icon--right"><arrow-down /></el-icon>
+            {{user.name}}<el-icon class="el-icon--right"><arrow-down /></el-icon>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>我的资料</el-dropdown-item>
               <el-dropdown-item>修改密码</el-dropdown-item>
-              <el-dropdown-item divided>退出登录</el-dropdown-item>
+              <el-dropdown-item divided @click="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
       </el-header>
       <!-- 中 -->
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view/>
+      </el-main>
       <!-- 下 -->
       <el-footer>@版权所有 2000-2099 王德发 山西省大同市云冈区云洲西城A区11栋</el-footer>
     </el-container>
@@ -150,13 +153,15 @@
 </template>
 
 <script>
-import {doGet} from "../http/httpRequest.js";
+import {doGet, removeToken} from "../http/httpRequest.js";
+import {messageConfirm, messageTip} from "../util/util.js";
 
 export default {
   name: "DashboardView",
   data(){
     return {
       isCollapse: false, // 控制左侧菜单左右折叠，true是折叠
+      user: {}, // 当前登录用户的信息
     }
   },
 
@@ -174,9 +179,31 @@ export default {
     // 加载当前登录用户
     loadLoginUser(){
       doGet("/api/login/info", {}).then((rep) => {
-          console.log(rep)
+          // console.log(rep)
+        this.user = rep.data.data
       })
-    }
+    },
+    
+    // 退出登录
+    logout(){
+      doGet("/api/logout", {}).then((rep) => {
+        if (rep.data.code === 200){
+          removeToken(); // 删除前端存储的token
+          messageTip("退出成功", "success");
+          //window.location.href = "/"
+          this.$router.push("/")
+        } else {
+          messageConfirm("退出异常,是否强制退出?").then(() => {
+            removeToken();
+            messageTip("退出成功", "success");
+            // window.location.href = "/"
+            this.$router.push("/")
+          }).catch(() => {
+              messageTip("取消强制退出", "warning");
+          })
+        }
+      })
+    },
   }
 }
 </script>

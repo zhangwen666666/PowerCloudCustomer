@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zw.mapper.TUserMapper">
+
   <resultMap id="BaseResultMap" type="com.zw.entity.TUser">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="login_act" jdbcType="VARCHAR" property="loginAct" />
@@ -18,26 +19,62 @@
     <result column="edit_by" jdbcType="INTEGER" property="editBy" />
     <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
   </resultMap>
+
+  <resultMap id="UserDetailResultMap" type="com.zw.entity.TUser">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="login_act" jdbcType="VARCHAR" property="loginAct" />
+    <result column="login_pwd" jdbcType="VARCHAR" property="loginPwd" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="account_no_expired" jdbcType="INTEGER" property="accountNoExpired" />
+    <result column="credentials_no_expired" jdbcType="INTEGER" property="credentialsNoExpired" />
+    <result column="account_no_locked" jdbcType="INTEGER" property="accountNoLocked" />
+    <result column="account_enabled" jdbcType="INTEGER" property="accountEnabled" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="edit_by" jdbcType="INTEGER" property="editBy" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+  </resultMap>
+
   <sql id="Base_Column_List">
     id, login_act, login_pwd, `name`, phone, email, account_no_expired, credentials_no_expired, 
     account_no_locked, account_enabled, create_time, create_by, edit_time, edit_by, last_login_time
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from t_user
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <select id="selectByLoginAct" resultType="com.zw.entity.TUser">
     select
         <include refid="Base_Column_List"/>
     from t_user
     where login_act = #{username}
   </select>
+
+  <select id="selectAll" resultType="com.zw.entity.TUser">
+    select
+        <include refid="Base_Column_List"/>
+    from t_user
+  </select>
+
+  <select id="selectDetailById" resultType="com.zw.entity.TUser">
+      select t.*, t1.name createrName, t2.name editorName from t_user t
+        left join t_user t1 on t.create_by = t1.id
+        left join t_user t2 on t.edit_by = t2.id
+      where t.id = #{id}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_user
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zw.entity.TUser" useGeneratedKeys="true">
     insert into t_user (login_act, login_pwd, `name`, 
       phone, email, account_no_expired, 
@@ -52,6 +89,7 @@
       #{editTime,jdbcType=TIMESTAMP}, #{editBy,jdbcType=INTEGER}, #{lastLoginTime,jdbcType=TIMESTAMP}
       )
   </insert>
+
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zw.entity.TUser" useGeneratedKeys="true">
     insert into t_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -143,6 +181,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.zw.entity.TUser">
     update t_user
     <set>
@@ -191,6 +230,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.zw.entity.TUser">
     update t_user
     set login_act = #{loginAct,jdbcType=VARCHAR},
@@ -209,4 +249,5 @@
       last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
 </mapper>

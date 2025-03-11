@@ -34,12 +34,13 @@
 </template>
 
 <script>
-import {doPost, removeToken} from "../http/httpRequest.js";
+import {doGet, doPost, removeToken} from "../http/httpRequest.js";
 import {getTokenName, messageTip} from "../util/util.js";
 
 export default {
   // 组件的名称
   name: "LoginView",
+
   // 定义页面使用到的变量, 初始值为空
   data() {
     return {
@@ -61,6 +62,10 @@ export default {
         ]
       }
     }
+  },
+
+  mounted() {
+    this.freeLogin();
   },
 
   // 页面上需要使用的js函数，都在methods属性中定义
@@ -108,10 +113,26 @@ export default {
             window.sessionStorage.setItem(getTokenName(), rep.data.data)
           }
           // 跳转到系统的主页面
-          window.location.href = "/dashboard";
+          this.$router.push("/dashboard")
+          //window.location.href = "/dashboard";
         });
       })
-    }
+    },
+
+    // 自动登录
+    freeLogin(){
+      let token = window.localStorage.getItem(getTokenName());
+      if(!token){
+        return;
+      }
+      doGet("/api/login/free", {}).then((resp) => {
+        if (resp.data.code === 200) {
+          // token验证通过，免登录
+          this.$router.push("/dashboard")
+          //window.location.href = "/dashboard";
+        }
+      })
+    },
   }
 }
 </script>
