@@ -63,7 +63,7 @@
     from t_user
   </select>
 
-  <select id="selectDetailById" resultType="com.zw.entity.TUser">
+  <select id="selectDetailById" resultType="com.zw.vo.UserDetailVO">
       select t.*, t1.name createrName, t2.name editorName from t_user t
         left join t_user t1 on t.create_by = t1.id
         left join t_user t2 on t.edit_by = t2.id

@@ -1,14 +1,14 @@
 package com.zw.web;
 
 import com.github.pagehelper.PageInfo;
+import com.zw.dto.UserSaveDTO;
 import com.zw.entity.TUser;
 import com.zw.result.R;
 import com.zw.service.UserService;
+import com.zw.vo.UserDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -55,8 +55,15 @@ public class UserController {
      * @return
      */
     @GetMapping("/api/user/{id}")
-    public R<TUser> userDetail(@PathVariable("id") Integer id){
-        TUser user = userService.userDetail(id);
-        return R.OK(user);
+    public R<UserDetailVO> userDetail(@PathVariable("id") Integer id){
+        UserDetailVO userDetailVO = userService.userDetail(id);
+        return R.OK(userDetailVO);
+    }
+
+    @PostMapping("/api/user")
+    public R saveUser(@RequestBody UserSaveDTO userSaveDTO){
+        // System.out.println(userSaveDTO);
+        int ret = userService.saveUser(userSaveDTO);
+        return ret >= 1 ? R.OK() : R.error();
     }
 }

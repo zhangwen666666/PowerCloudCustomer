@@ -1,6 +1,7 @@
 package com.zw.mapper;
 
 import com.zw.entity.TUser;
+import com.zw.vo.UserDetailVO;
 
 import java.util.List;
 
@@ -36,5 +37,5 @@ public interface TUserMapper {
      * @param id
      * @return
      */
-    TUser selectDetailById(Integer id);
+    UserDetailVO selectDetailById(Integer id);
 }

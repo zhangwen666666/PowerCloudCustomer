@@ -86,11 +86,6 @@ public class TUser implements Serializable , UserDetails {
     private Integer createBy;
 
     /**
-     * 创建人姓名
-     */
-    private String createrName;
-
-    /**
      * 编辑时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -100,11 +95,6 @@ public class TUser implements Serializable , UserDetails {
      * 编辑人
      */
     private Integer editBy;
-
-    /**
-     * 编辑人姓名
-     */
-    private String editorName;
 
     /**
      * 最近登录时间

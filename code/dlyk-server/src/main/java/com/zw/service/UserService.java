@@ -1,7 +1,9 @@
 package com.zw.service;
 
 import com.github.pagehelper.PageInfo;
+import com.zw.dto.UserSaveDTO;
 import com.zw.entity.TUser;
+import com.zw.vo.UserDetailVO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService extends UserDetailsService {
@@ -19,5 +21,12 @@ public interface UserService extends UserDetailsService {
      * @param id
      * @return
      */
-    TUser userDetail(Integer id);
+    UserDetailVO userDetail(Integer id);
+
+    /**
+     * 新增用户
+     * @param userSaveDTO
+     * @return
+     */
+    int saveUser(UserSaveDTO userSaveDTO);
 }
