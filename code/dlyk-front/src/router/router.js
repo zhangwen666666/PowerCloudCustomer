@@ -21,7 +21,11 @@ const router = createRouter({
                 {
                     path: "user/:id", // 动态路由
                     component: () => import('../view/UserDetailView.vue')
-                }
+                },
+                {
+                    path: "activity",
+                    component: () => import('../view/ActivityView.vue')
+                },
             ]
         }
     ]

@@ -1,6 +1,5 @@
 package com.zw.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -77,7 +76,7 @@ public class TUser implements Serializable , UserDetails {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    // @JsonFormat
     private Date createTime;
 
     /**
@@ -88,7 +87,7 @@ public class TUser implements Serializable , UserDetails {
     /**
      * 编辑时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    // @JsonFormat
     private Date editTime;
 
     /**
@@ -99,7 +98,7 @@ public class TUser implements Serializable , UserDetails {
     /**
      * 最近登录时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    // @JsonFormat
     private Date lastLoginTime;
 
     /**

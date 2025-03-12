@@ -2,7 +2,6 @@ package com.zw.aspect;
 
 import com.zw.annotations.DataScope;
 import com.zw.dto.FilterSqlDTO;
-import com.zw.entity.TRole;
 import com.zw.util.UserInfoUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,8 +9,6 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Aspect
 @Component
@@ -30,8 +27,6 @@ public class DataScopeAspect {
         String tableFiled = dataScope.tableFiled();
         // 获取方法参数
         FilterSqlDTO filterSqlDTO = (FilterSqlDTO) joinPoint.getArgs()[0];
-        // 获取用户权限列表
-        List<TRole> roleList = UserInfoUtil.getCurrentUser().getRoleList();
         // 要追加的过滤条件
         String filterSql = "";
         if(tableAlias.isEmpty()){
@@ -40,16 +35,9 @@ public class DataScopeAspect {
         }else {
             filterSql = " and " + tableAlias + "." + tableFiled + "=" + UserInfoUtil.getCurrentUser().getId();
         }
-        if (roleList == null || roleList.isEmpty()){
-            // 用户权限列表为空 只查自己的
-            filterSqlDTO.filterSql = filterSql;
+        if (UserInfoUtil.isAdmin()) {
+            // 是管理员
             return;
-        }
-        for (int i = 0; i < roleList.size(); i++) {
-            if (roleList.get(i).getRole().equals("admin")){
-                // 是管理员
-                return;
-            }
         }
         // 不是管理员
         filterSqlDTO.filterSql = filterSql;
