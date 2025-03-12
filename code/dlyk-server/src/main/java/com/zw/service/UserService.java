@@ -6,6 +6,8 @@ import com.zw.entity.TUser;
 import com.zw.vo.UserDetailVO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
+
 public interface UserService extends UserDetailsService {
 
     /**
@@ -29,4 +31,25 @@ public interface UserService extends UserDetailsService {
      * @return
      */
     int saveUser(UserSaveDTO userSaveDTO);
+
+    /**
+     * 编辑用户
+     * @param userSaveDTO
+     * @return
+     */
+    int updateUser(UserSaveDTO userSaveDTO);
+
+    /**
+     * 根据id删除单个用户
+     * @param id
+     * @return
+     */
+    int deleteUser(Integer id);
+
+    /**
+     * 根据id批量删除用户
+     * @param ids
+     * @return
+     */
+    int batchDeleteUser(List<Integer> ids);
 }

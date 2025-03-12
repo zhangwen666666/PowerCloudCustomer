@@ -2,6 +2,8 @@ package com.zw.mapper;
 
 import com.zw.entity.TRole;
 
+import java.util.List;
+
 public interface TRoleMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,11 @@ public interface TRoleMapper {
     int updateByPrimaryKeySelective(TRole record);
 
     int updateByPrimaryKey(TRole record);
+
+    /**
+     * 根据用户id查询角色列表
+     * @param userId
+     * @return
+     */
+    List<TRole> selectByUserId(Integer userId);
 }

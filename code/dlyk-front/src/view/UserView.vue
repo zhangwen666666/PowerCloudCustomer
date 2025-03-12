@@ -1,8 +1,8 @@
 <template>
-  <el-button type="primary" @click="dialogVisible = true">
+  <el-button type="primary" @click="addUser">
     添加用户
   </el-button>
-  <el-button type="danger">批量删除</el-button>
+  <el-button type="danger" @click="delBatch">批量删除</el-button>
 
   <!-- 数据列表 -->
   <el-table
@@ -39,18 +39,19 @@
   />
 
   <!-- 新增用户的弹窗(对话框) -->
-  <el-dialog v-model="dialogVisible" title="新增用户" center width="60%" draggable>
+  <el-dialog v-model="dialogVisible" :title="newUser.id !== undefined ? '修改用户' : '新增用户'" center width="60%"
+             draggable>
     <!-- 表单内容 -->
     <el-form ref="addRefForm" :model="newUser" :rules="newUserRules" label-width="110px">
       <el-form-item label="账号" prop="loginAct">
         <el-input v-model="newUser.loginAct"/>
       </el-form-item>
 
-      <el-form-item label="密码" prop="loginPwd">
+      <el-form-item label="密码" prop="loginPwd" v-if="newUser.id === undefined">
         <el-input type="password" v-model="newUser.loginPwd"/>
       </el-form-item>
 
-      <el-form-item label="确认密码" prop="loginPwdConfirm">
+      <el-form-item label="确认密码" prop="loginPwdConfirm" v-if="newUser.id === undefined">
         <el-input type="password" v-model="newUser.loginPwdConfirm"/>
       </el-form-item>
 
@@ -68,29 +69,25 @@
 
       <el-form-item label="账号未过期" prop="accountNoExpired">
         <el-select v-model="newUser.accountNoExpired" class="m-2" placeholder="请选择" style="width: 100%">
-          <el-option label="是" value="1"/>
-          <el-option label="否" value="0"/>
+          <el-option v-for="option in options" :key="option.value" :label="option.label" :value="option.value"/>
         </el-select>
       </el-form-item>
 
       <el-form-item label="密码未过期" prop="credentialsNoExpired">
         <el-select v-model="newUser.credentialsNoExpired" class="m-2" placeholder="请选择" style="width: 100%">
-          <el-option label="是" value="1"/>
-          <el-option label="否" value="0"/>
+          <el-option v-for="option in options" :key="option.value" :label="option.label" :value="option.value"/>
         </el-select>
       </el-form-item>
 
       <el-form-item label="账号未锁定" prop="accountNoLocked">
         <el-select v-model="newUser.accountNoLocked" class="m-2" placeholder="请选择" style="width: 100%">
-          <el-option label="是" value="1"/>
-          <el-option label="否" value="0"/>
+          <el-option v-for="option in options" :key="option.value" :label="option.label" :value="option.value"/>
         </el-select>
       </el-form-item>
 
       <el-form-item label="账号是否启用" prop="accountEnabled">
         <el-select v-model="newUser.accountEnabled" class="m-2" placeholder="请选择" style="width: 100%">
-          <el-option label="是" value="1"/>
-          <el-option label="否" value="0"/>
+          <el-option v-for="option in options" :key="option.value" :label="option.label" :value="option.value"/>
         </el-select>
       </el-form-item>
     </el-form>
@@ -107,12 +104,13 @@
 </template>
 
 <script>
-import {doGet, doPost} from "../http/httpRequest.js";
+import {doDel, doGet, doPost, doPut} from "../http/httpRequest.js";
 import {Delete, Edit, Search} from "@element-plus/icons-vue";
-import {messageTip} from "../util/util.js";
+import {messageConfirm, messageTip} from "../util/util.js";
 
 export default {
   name: "UserView",
+  inject: ['reload'], // 注入父页面提供的reload函数
   computed: {
     Delete() {
       return Delete
@@ -134,6 +132,10 @@ export default {
       total: 0, // 总记录条数
       dialogVisible: false, // 新增用户对话框是否弹出
       newUser: {}, // 新增用户的信息
+      options: [
+        {label: '是', value: 1},
+        {label: '否', value: 0},
+      ],
 
       // 定义登录表单的验证规则
       newUserRules: {
@@ -175,7 +177,10 @@ export default {
         accountEnabled: [
           {required: true, message: '请选择账号是否启用', trigger: 'blur'},
         ],
-      }
+      },
+
+      // 当前选中的用户id数组
+      userIds: [],
     }
   },
 
@@ -185,8 +190,14 @@ export default {
 
   methods: {
     // 全选或取消全选触发该函数
-    handleSelectionChange() {
-
+    handleSelectionChange(selections) {
+      this.userIds = []
+      // console.log(selections)
+      selections.forEach((item) => {
+        // console.log(item.id)
+        this.userIds.push(item.id)
+      })
+      console.log(this.userIds)
     },
 
     // 查询用户列表数据
@@ -224,25 +235,97 @@ export default {
       }
     },
 
-    // 新增用户
+    addUser() {
+      this.newUser = {}
+      this.dialogVisible = true
+    },
+
+    // 提交新增用户(提交编辑用户)
     userSubmit() {
       this.$refs.addRefForm.validate((isValid) => {
-        if (!isValid){
+        if (!isValid) {
           // 表单验证未通过，不能提交表单
           return
+        }
+        if (this.newUser.id !== undefined) {
+          // 编辑
+          messageConfirm("修改之后不能撤销, 是否确认修改").then(() => {
+            doPut('api/user', this.newUser).then((resp) => {
+              if (resp.data.code === 200) {
+                messageTip("修改成功", "success")
+                this.reload();
+              } else {
+                messageTip("修改失败", "error")
+              }
+            })
+          }).catch(() => {
+            messageTip("取消修改", "warning")
+          })
+          return;
         }
         doPost("api/user", this.newUser).then((resp) => {
           //console.log(resp)
           if (resp.data.code === 200) {
             messageTip("添加成功", "success")
+            // this.dialogVisible = false
+            // this.getUserList(this.pageNum, this.pageSize)
+            this.reload();
           } else {
             messageTip("添加失败", "error")
           }
         })
-        this.dialogVisible = false
-        this.getUserList(this.pageNum, this.pageSize)
       })
-    }
+    },
+
+    // 修改用户 (和新增用户公用一个页面)
+    edit(id) {
+      this.dialogVisible = true
+      doGet(`/api/user/${id}`).then((resp) => {
+        if (resp.data.code === 200) {
+          this.newUser = resp.data.data
+        }
+      })
+    },
+
+    // 删除用户
+    del(id) {
+      messageConfirm("删除之后不能撤销, 是否确认删除?").then(() => {
+        doDel(`/api/user/${id}`, {}).then((resp) => {
+          if (resp.data.code === 200) {
+            messageTip("删除成功", "success")
+            this.reload();
+          } else {
+            // console.log(resp.data)
+            messageTip("删除失败--" + resp.data.msg, "error")
+          }
+        })
+      }).catch(() => {
+        messageTip("取消删除", "warning")
+      })
+    },
+
+    // 批量删除用户
+    delBatch() {
+      if (this.userIds.length === 0){
+        messageTip("请选择要删除的用户", "warning")
+        return
+      }
+      messageConfirm("删除之后不能撤销, 是否确认删除?").then(() => {
+        doDel("/api/user", {
+          ids: this.userIds.join(",") // 数组转为字符串
+        }).then((resp) => {
+          if (resp.data.code === 200) {
+            messageTip("批量删除成功", "success")
+            this.reload();
+          } else {
+            // console.log(resp.data)
+            messageTip("批量删除失败--" + resp.data.msg, "error")
+          }
+        })
+      }).catch(() => {
+        messageTip("取消删除", "warning")
+      })
+    },
   }
 }
 </script>

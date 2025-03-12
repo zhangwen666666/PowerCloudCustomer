@@ -61,6 +61,11 @@
     select
         <include refid="Base_Column_List"/>
     from t_user
+    <where>
+      <if test="filterSql != null and filterSql != ''">
+        ${filterSql}
+      </if>
+    </where>
   </select>
 
   <select id="selectDetailById" resultType="com.zw.vo.UserDetailVO">
@@ -73,6 +78,13 @@
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_user
     where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByIds">
+    delete from t_user where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
   </delete>
 
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zw.entity.TUser" useGeneratedKeys="true">

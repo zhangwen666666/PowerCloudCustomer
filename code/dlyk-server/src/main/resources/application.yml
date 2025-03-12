@@ -33,12 +33,16 @@ mybatis:
   mapper-locations: classpath:mapper/*.xml
   #配置mybatis框架执行sql语句时，把sql语句打印到控制台
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 
 #项目启动日志的打印级别
 logging:
   level:
-    root: info
+    com:
+      zw:
+        mapper: debug
+        service: info
+        web: info
 
 

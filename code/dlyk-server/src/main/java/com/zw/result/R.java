@@ -1,5 +1,6 @@
 package com.zw.result;
 
+import com.zw.enums.CodeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,7 @@ public class R<T> {
     }
 
     public static <T> R<T> OK(String msg, T data){
-        return  R.<T> builder().code(CodeEnum.OK.getCode()).msg(CodeEnum.OK.getMsg()).data(data).build();
+        return  R.<T> builder().code(CodeEnum.OK.getCode()).msg(msg).data(data).build();
     }
 
     public static <T> R<T> error(){
@@ -31,7 +32,7 @@ public class R<T> {
     }
 
     public static <T> R<T> error(String msg){
-        return R.<T> builder().code(CodeEnum.FAIL.getCode()).msg(CodeEnum.FAIL.getMsg()).data(null).build();
+        return R.<T> builder().code(CodeEnum.FAIL.getCode()).msg(msg).data(null).build();
     }
 
     public static <T> R<T> error(int code, String msg){

@@ -1,6 +1,10 @@
 package com.zw.mapper;
 
+import com.zw.annotations.AutoFill;
+import com.zw.annotations.DataScope;
+import com.zw.dto.FilterSqlDTO;
 import com.zw.entity.TUser;
+import com.zw.enums.OperationType;
 import com.zw.vo.UserDetailVO;
 
 import java.util.List;
@@ -10,10 +14,12 @@ public interface TUserMapper {
 
     int insert(TUser record);
 
+    @AutoFill(OperationType.INSERT)
     int insertSelective(TUser record);
 
     TUser selectByPrimaryKey(Integer id);
 
+    @AutoFill(OperationType.UPDATE)
     int updateByPrimaryKeySelective(TUser record);
 
     int updateByPrimaryKey(TUser record);
@@ -29,7 +35,8 @@ public interface TUserMapper {
      * 查询所有账号
      * @return
      */
-    List<TUser> selectAll();
+    @DataScope(tableFiled = "id")
+    List<TUser> selectAll(FilterSqlDTO filterSqlDTO);
 
 
     /**
@@ -38,4 +45,11 @@ public interface TUserMapper {
      * @return
      */
     UserDetailVO selectDetailById(Integer id);
+
+    /**
+     * 根据id批量删除用户
+     * @param ids
+     * @return
+     */
+    int deleteByIds(List<Integer> ids);
 }

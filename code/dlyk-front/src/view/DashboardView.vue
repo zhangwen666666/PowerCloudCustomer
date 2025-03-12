@@ -144,7 +144,7 @@
       </el-header>
       <!-- 中 -->
       <el-main>
-        <router-view/>
+        <router-view v-if="isRouterAlive"/>
       </el-main>
       <!-- 下 -->
       <el-footer>@版权所有 2000-2099 王德发 山西省大同市云冈区云洲西城A区11栋</el-footer>
@@ -162,6 +162,19 @@ export default {
     return {
       isCollapse: false, // 控制左侧菜单左右折叠，true是折叠
       user: {}, // 当前登录用户的信息
+      isRouterAlive: true // 控制路由是否重新加载
+    }
+  },
+
+  // 这里定义的方法，属性，可以传递给子页面
+  provide(){
+    return {
+      reload: () => {
+        this.isRouterAlive = false; // 先设为 false
+        this.$nextTick(() => {
+          this.isRouterAlive = true; // 再设为 true，触发刷新
+        });
+      }
     }
   },
 

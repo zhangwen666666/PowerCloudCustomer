@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserSaveDTO {
     /**
+     * id
+     */
+    private Integer id;
+
+    /**
      * 登录账号
      */
     private String loginAct;

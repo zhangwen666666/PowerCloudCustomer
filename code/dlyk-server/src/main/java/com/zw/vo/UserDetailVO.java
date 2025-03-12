@@ -39,6 +39,11 @@ public class UserDetailVO {
     private Integer accountNoExpired;
 
     /**
+     * 密码是否没有过期，0已过期 1正常
+     */
+    private Integer credentialsNoExpired;
+
+    /**
      * 账号是否没有锁定，0已锁定 1正常
      */
     private Integer accountNoLocked;

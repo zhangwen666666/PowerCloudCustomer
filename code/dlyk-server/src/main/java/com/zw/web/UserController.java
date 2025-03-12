@@ -8,7 +8,10 @@ import com.zw.service.UserService;
 import com.zw.vo.UserDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -64,6 +67,27 @@ public class UserController {
     public R saveUser(@RequestBody UserSaveDTO userSaveDTO){
         // System.out.println(userSaveDTO);
         int ret = userService.saveUser(userSaveDTO);
+        return ret >= 1 ? R.OK() : R.error();
+    }
+
+    @PutMapping("/api/user")
+    public R updateUser(@RequestBody UserSaveDTO userSaveDTO){
+         // System.out.println(userSaveDTO);
+        int ret = userService.updateUser(userSaveDTO);
+        return ret >= 1 ? R.OK() : R.error();
+    }
+
+    @DeleteMapping("/api/user/{id}")
+    public R deleteUser(@PathVariable("id") Integer id){
+        int ret = userService.deleteUser(id);
+        return ret >= 1 ? R.OK() : R.error();
+    }
+
+    @DeleteMapping("/api/user")
+    @Transactional
+    public R batchDeleteUser(@RequestParam List<Integer> ids){
+        // System.out.println(userSaveDTO);
+        int ret = userService.batchDeleteUser(ids);
         return ret >= 1 ? R.OK() : R.error();
     }
 }

@@ -9,20 +9,30 @@
   <sql id="Base_Column_List">
     id, `role`, role_name
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from t_role
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectByUserId" resultType="com.zw.entity.TRole">
+    select tr.* from t_role tr
+      left join t_user_role tur on tr.id = tur.role_id
+      where tur.id = #{userId};
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_role
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zw.entity.TRole" useGeneratedKeys="true">
     insert into t_role (`role`, role_name)
     values (#{role,jdbcType=VARCHAR}, #{roleName,jdbcType=VARCHAR})
   </insert>
+
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zw.entity.TRole" useGeneratedKeys="true">
     insert into t_role
     <trim prefix="(" suffix=")" suffixOverrides=",">

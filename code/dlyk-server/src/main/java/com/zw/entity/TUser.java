@@ -106,7 +106,7 @@ public class TUser implements Serializable , UserDetails {
      * 用户的角色列表
      */
     @JsonIgnore
-    private List<String> roleList;
+    private List<TRole> roleList;
 
     /**
      * 用户的权限列表（存放权限标识符）
@@ -123,7 +123,7 @@ public class TUser implements Serializable , UserDetails {
         // 角色
         if (!ObjectUtils.isEmpty(roleList)){
             roleList.forEach(role -> {
-                list.add(new SimpleGrantedAuthority("ROLE_" + role));
+                list.add(new SimpleGrantedAuthority("ROLE_" + role.getRole()));
             });
         }
         // 权限标识符
