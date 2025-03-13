@@ -2,13 +2,18 @@ package com.zw.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zw.consts.Constant;
 import com.zw.dto.FilterSqlDTO;
 import com.zw.dto.UserSaveDTO;
 import com.zw.entity.TRole;
 import com.zw.entity.TUser;
+import com.zw.manager.RedisManager;
 import com.zw.mapper.TRoleMapper;
 import com.zw.mapper.TUserMapper;
 import com.zw.service.UserService;
+import com.zw.util.CacheUtil;
+import com.zw.util.UserInfoUtil;
+import com.zw.vo.OwnerVO;
 import com.zw.vo.UserDetailVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,8 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private TRoleMapper tRoleMapper;
+    @Autowired
+    private RedisManager redisManager;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -122,5 +129,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public int batchDeleteUser(List<Integer> ids) {
         return tUserMapper.deleteByIds(ids);
+    }
+
+
+    /**
+     * 获取负责人列表
+     * @return
+     */
+    @Override
+    public List<OwnerVO> getOwnerList() {
+        // 如果不是管理员，则只查询自己的活动，因此负责人列表也只有自己
+        if (!UserInfoUtil.isAdmin()) {
+            OwnerVO ownerVO = new OwnerVO(UserInfoUtil.getCurrentUser().getId(), UserInfoUtil.getCurrentUser().getName());
+            return List.of(ownerVO);
+        }
+        // 使用带有缓存的查询工具方法，获取所有的负责人姓名和id
+        return CacheUtil.getCacheData(() -> {
+            // 从缓存查数据
+            return (List<OwnerVO>) redisManager.getValue(Constant.REDIS_OWNER_KEY);
+        }, () -> {
+            // 从数据库查数据
+            return tUserMapper.getOwnerList();
+        }, (t) -> {
+            // 存入redis中
+            redisManager.setValue(Constant.REDIS_OWNER_KEY, t);
+        });
     }
 }

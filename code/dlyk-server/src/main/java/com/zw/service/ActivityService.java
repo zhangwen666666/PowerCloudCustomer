@@ -1,23 +1,35 @@
 package com.zw.service;
 
 import com.github.pagehelper.PageInfo;
+import com.zw.dto.ActivityPageQueryDTO;
+import com.zw.entity.TActivity;
 import com.zw.vo.ActivityVO;
-import com.zw.vo.OwnerVO;
-
-import java.util.List;
 
 public interface ActivityService {
     /**
      * 分页查询活动数据
-     * @param pageNum
-     * @param pageSize
+     * @param activityPageQueryDTO
      * @return
      */
-    PageInfo<ActivityVO> activityPage(Integer pageNum, Integer pageSize);
+    PageInfo<ActivityVO> activityPage(ActivityPageQueryDTO activityPageQueryDTO);
 
     /**
-     * 获取负责人列表
+     * 保存活动数据
+     * @param tActivity
+     */
+    void saveActivity(TActivity tActivity);
+
+    /**
+     * 根据id查询活动详情
+     * @param id
      * @return
      */
-    List<OwnerVO> getOwnerList();
+    ActivityVO activityDetail(Integer id);
+
+
+    /**
+     * 修改活动数据
+     * @param tActivity
+     */
+    void updateActivity(TActivity tActivity);
 }

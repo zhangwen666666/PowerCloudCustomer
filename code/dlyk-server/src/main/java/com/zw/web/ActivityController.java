@@ -1,15 +1,13 @@
 package com.zw.web;
 
 import com.github.pagehelper.PageInfo;
+import com.zw.dto.ActivityPageQueryDTO;
+import com.zw.entity.TActivity;
 import com.zw.result.R;
 import com.zw.service.ActivityService;
 import com.zw.vo.ActivityVO;
-import com.zw.vo.OwnerVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ActivityController {
@@ -18,19 +16,46 @@ public class ActivityController {
 
     /**
      * 分页查询活动列表
-     * @param pageNum
-     * @param pageSize
+     * @param activityPageQueryDTO
      * @return
      */
     @GetMapping("/api/activity/list")
-    public R<PageInfo<ActivityVO>> activityPage(Integer pageNum, Integer pageSize){
-        PageInfo<ActivityVO> pageInfo = activityService.activityPage(pageNum, pageSize);
+    public R<PageInfo<ActivityVO>> activityPage(ActivityPageQueryDTO activityPageQueryDTO){
+        // System.out.println(activityPageQueryDTO);
+        PageInfo<ActivityVO> pageInfo = activityService.activityPage(activityPageQueryDTO);
         return R.OK(pageInfo);
     }
 
-    @GetMapping("/api/activity/ownerList")
-    public R<List<OwnerVO>> ownerList(){
-        List<OwnerVO> ownerList = activityService.getOwnerList();
-        return R.OK(ownerList);
+    /**
+     * 新增活动
+     * @param tActivity
+     * @return
+     */
+    @PostMapping("/api/activity")
+    public R saveActivity(@RequestBody TActivity tActivity){
+        activityService.saveActivity(tActivity);
+        return R.OK();
+    }
+
+    /**
+     * 根据id查询活动详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/api/activity/{id}")
+    public R<ActivityVO> activityDetail(@PathVariable("id") Integer id){
+        ActivityVO activityVO = activityService.activityDetail(id);
+        return R.OK(activityVO);
+    }
+
+    /**
+     * 修改活动
+     * @param tActivity
+     * @return
+     */
+    @PutMapping("/api/activity")
+    public R updateActivity(@RequestBody TActivity tActivity){
+        activityService.updateActivity(tActivity);
+        return R.OK();
     }
 }

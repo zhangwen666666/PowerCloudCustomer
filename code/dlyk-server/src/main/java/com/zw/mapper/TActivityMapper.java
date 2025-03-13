@@ -1,22 +1,27 @@
 package com.zw.mapper;
 
+import com.zw.annotations.AutoFill;
 import com.zw.annotations.DataScope;
+import com.zw.dto.ActivityPageQueryDTO;
 import com.zw.dto.FilterSqlDTO;
 import com.zw.entity.TActivity;
+import com.zw.enums.OperationType;
 import com.zw.vo.ActivityVO;
-import com.zw.vo.OwnerVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface TActivityMapper {
     int deleteByPrimaryKey(Integer id);
 
+    @AutoFill(OperationType.INSERT)
     int insert(TActivity record);
 
     int insertSelective(TActivity record);
 
     TActivity selectByPrimaryKey(Integer id);
 
+    @AutoFill(OperationType.UPDATE)
     int updateByPrimaryKeySelective(TActivity record);
 
     int updateByPrimaryKey(TActivity record);
@@ -27,13 +32,12 @@ public interface TActivityMapper {
      * @return
      */
     @DataScope(tableAlias = "ta",tableFiled = "owner_id")
-    List<ActivityVO> selectAll(FilterSqlDTO filterSqlDTO);
+    List<ActivityVO> selectAll(@Param("filterSqlDTO") FilterSqlDTO filterSqlDTO,@Param("activityPageQueryDTO") ActivityPageQueryDTO activityPageQueryDTO);
 
     /**
-     * 获取负责人列表
+     * 根据id查询活动详细数据
+     * @param id
      * @return
      */
-    @DataScope(tableAlias = "ta",tableFiled = "owner_id")
-    List<OwnerVO> getOwnerList(FilterSqlDTO filterSqlDTO);
-
+    ActivityVO selectDetailById(Integer id);
 }

@@ -3,6 +3,7 @@ package com.zw.service;
 import com.github.pagehelper.PageInfo;
 import com.zw.dto.UserSaveDTO;
 import com.zw.entity.TUser;
+import com.zw.vo.OwnerVO;
 import com.zw.vo.UserDetailVO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -52,4 +53,12 @@ public interface UserService extends UserDetailsService {
      * @return
      */
     int batchDeleteUser(List<Integer> ids);
+
+
+
+    /**
+     * 获取负责人列表
+     * @return
+     */
+    List<OwnerVO> getOwnerList();
 }

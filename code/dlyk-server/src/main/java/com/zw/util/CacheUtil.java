@@ -1,6 +1,7 @@
 package com.zw.util;
 
-import java.util.Objects;
+import org.springframework.util.ObjectUtils;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -16,10 +17,10 @@ public class CacheUtil {
     public static <T> T getCacheData(Supplier<T> cacheSelector, Supplier<T> dbSelector, Consumer<T> cacheSave){
         // 1. 从缓存中查询数据
         T data = cacheSelector.get();
-        if(Objects.isNull(data)){
+        if(ObjectUtils.isEmpty(data)){
             // 缓存中没查到, 从数据库中查询
             data = dbSelector.get();
-            if(!Objects.isNull(data)){
+            if(!ObjectUtils.isEmpty(data)){
                 // 数据库中查询到了数据，需要把数据放入缓存中
                 cacheSave.accept(data);
             }

@@ -29,32 +29,50 @@
 
   <select id="selectAll" resultType="com.zw.vo.ActivityVO">
     select
-     ta.*, tu.name ownerName, tu1.name createrName, tu2.edit_by editorName
+    ta.*, tu.name ownerName
     from t_activity ta
         left join t_user tu on tu.id = ta.owner_id
-        left join t_user tu1 on tu1.id = ta.create_by
-        left join t_user tu2 on tu2.id = ta.edit_by
     <where>
-      <if test="filterSql != null and filterSql != ''">
-        ${filterSql}
+      <if test="filterSqlDTO.filterSql != null and filterSqlDTO.filterSql != ''">
+        ${filterSqlDTO.filterSql}
+      </if>
+      <if test="activityPageQueryDTO.ownerId != null">
+        and ta.owner_id = #{activityPageQueryDTO.ownerId}
+      </if>
+      <if test="activityPageQueryDTO.name != null">
+        and ta.name like concat('%',#{activityPageQueryDTO.name},'%')
+      </if>
+      <if test="activityPageQueryDTO.startTime != null">
+        and ta.start_time &gt;= #{activityPageQueryDTO.startTime}
+      </if>
+      <if test="activityPageQueryDTO.endTime != null">
+        and ta.end_time &lt;= #{activityPageQueryDTO.endTime}
+      </if>
+      <if test="activityPageQueryDTO.cost != null">
+        and ta.cost &gt;= #{activityPageQueryDTO.cost}
+      </if>
+      <if test="activityPageQueryDTO.createTime != null">
+        and ta.create_time &gt;= #{activityPageQueryDTO.createTime}
       </if>
     </where>
+    order by ta.edit_time desc
   </select>
 
-  <select id="getOwnerList" resultType="com.zw.vo.OwnerVO">
-    select distinct ta.owner_id ownerId ,tu.name ownerName
-    from t_activity ta left join t_user tu on ta.owner_id = tu.id
-    <where>
-      <if test="filterSql != null and filterSql != ''">
-        ${filterSql}
-      </if>
-    </where>
+  <select id="selectDetailById" resultType="com.zw.vo.ActivityVO">
+    select
+      ta.*, tu.name ownerName, tu1.name createrName, tu2.name editorName
+    from t_activity ta
+           left join t_user tu on tu.id = ta.owner_id
+           left join t_user tu1 on tu1.id = ta.create_by
+           left join t_user tu2 on tu2.id = ta.edit_by
+    where ta.id = #{id}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_activity
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zw.entity.TActivity" useGeneratedKeys="true">
     insert into t_activity (owner_id, `name`, start_time, 
       end_time, cost, description, 
@@ -65,6 +83,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER}, #{editTime,jdbcType=TIMESTAMP}, 
       #{editBy,jdbcType=INTEGER})
   </insert>
+
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zw.entity.TActivity" useGeneratedKeys="true">
     insert into t_activity
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -132,6 +151,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.zw.entity.TActivity">
     update t_activity
     <set>
@@ -168,6 +188,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.zw.entity.TActivity">
     update t_activity
     set owner_id = #{ownerId,jdbcType=INTEGER},

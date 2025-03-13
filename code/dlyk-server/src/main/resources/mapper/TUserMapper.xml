@@ -75,7 +75,11 @@
       where t.id = #{id}
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <select id="getOwnerList" resultType="com.zw.vo.OwnerVO">
+    select id ownerId, name ownerName from t_user
+  </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_user
     where id = #{id,jdbcType=INTEGER}
   </delete>

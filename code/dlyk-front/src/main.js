@@ -1,6 +1,7 @@
 import { createApp } from 'vue' // 从vue框架导入createApp函数
 // import './style.css' // 导入css样式
 import ElementPlus from 'element-plus'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import 'element-plus/dist/index.css'
 
 import App from './App.vue' // 从./App.vue页面导入App组件
@@ -17,4 +18,4 @@ const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
-app.use(ElementPlus).use(router).mount('#app')
+app.use(ElementPlus,{locale: zhCn}).use(router).mount('#app')

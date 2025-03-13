@@ -11,4 +11,9 @@ public class Constant {
 
     // 登录请求的URI
     public static final String LOGIN_URI = "/api/login";
+
+    // redis存储的owner信息key
+    public static final String REDIS_OWNER_KEY = "dlyk:user:owner";
+
+    public static final long REDIS_OWNER_KEY_EXPIRE_TIME = 30 * 60L;
 }

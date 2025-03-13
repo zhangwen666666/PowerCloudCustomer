@@ -26,6 +26,18 @@ const router = createRouter({
                     path: "activity",
                     component: () => import('../view/ActivityView.vue')
                 },
+                {
+                    path: "activity/add",
+                    component: () => import('../view/ActivityAddView.vue')
+                },
+                {
+                    path: "activity/edit/:id",
+                    component: () => import('../view/ActivityAddView.vue')
+                },
+                {
+                    path: "activity/:id",
+                    component: () => import('../view/ActivityDetailView.vue')
+                },
             ]
         }
     ]

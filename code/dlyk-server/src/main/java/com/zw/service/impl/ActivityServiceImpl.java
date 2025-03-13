@@ -2,12 +2,12 @@ package com.zw.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zw.dto.ActivityPageQueryDTO;
 import com.zw.dto.FilterSqlDTO;
+import com.zw.entity.TActivity;
 import com.zw.mapper.TActivityMapper;
 import com.zw.service.ActivityService;
-import com.zw.util.UserInfoUtil;
 import com.zw.vo.ActivityVO;
-import com.zw.vo.OwnerVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,36 +20,40 @@ public class ActivityServiceImpl implements ActivityService {
 
     /**
      * 分页查询活动数据
-     * @param pageNum
-     * @param pageSize
      * @return
      */
     @Override
-    public PageInfo<ActivityVO> activityPage(Integer pageNum, Integer pageSize) {
-        if (pageNum == null){
-            pageNum = 1;
-        }
-        if (pageSize == null){
-            pageSize = 10;
-        }
-        PageHelper.startPage(pageNum, pageSize);
-        List<ActivityVO> userList = tActivityMapper.selectAll(new FilterSqlDTO());
+    public PageInfo<ActivityVO> activityPage(ActivityPageQueryDTO activityPageQueryDTO) {
+        PageHelper.startPage(activityPageQueryDTO.getPageNum(), activityPageQueryDTO.getPageSize());
+        List<ActivityVO> userList = tActivityMapper.selectAll(new FilterSqlDTO(), activityPageQueryDTO);
         return new PageInfo<>(userList);
     }
 
+    /**
+     * 保存活动数据
+     * @param tActivity
+     */
+    @Override
+    public void saveActivity(TActivity tActivity) {
+        tActivityMapper.insert(tActivity);
+    }
 
     /**
-     * 获取负责人列表
+     * 根据id查询活动详情
+     * @param id
      * @return
      */
     @Override
-    public List<OwnerVO> getOwnerList() {
-        // 如果不是管理员，则只查询自己的活动，因此负责人列表也只有自己
-        if (!UserInfoUtil.isAdmin()) {
-            OwnerVO ownerVO = new OwnerVO(UserInfoUtil.getCurrentUser().getId(), UserInfoUtil.getCurrentUser().getName());
-            return List.of(ownerVO);
-        }
-        // 查询数据库，获取所有的负责人姓名和id
-        return tActivityMapper.getOwnerList(new FilterSqlDTO());
+    public ActivityVO activityDetail(Integer id) {
+        return tActivityMapper.selectDetailById(id);
+    }
+
+    /**
+     * 修改活动数据
+     * @param tActivity
+     */
+    @Override
+    public void updateActivity(TActivity tActivity) {
+       tActivityMapper.updateByPrimaryKeySelective(tActivity);
     }
 }

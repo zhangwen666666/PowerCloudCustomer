@@ -5,6 +5,7 @@ import com.zw.annotations.DataScope;
 import com.zw.dto.FilterSqlDTO;
 import com.zw.entity.TUser;
 import com.zw.enums.OperationType;
+import com.zw.vo.OwnerVO;
 import com.zw.vo.UserDetailVO;
 
 import java.util.List;
@@ -52,4 +53,11 @@ public interface TUserMapper {
      * @return
      */
     int deleteByIds(List<Integer> ids);
+
+
+    /**
+     * 获取负责人列表
+     * @return
+     */
+    List<OwnerVO> getOwnerList();
 }

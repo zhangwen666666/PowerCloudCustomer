@@ -5,6 +5,7 @@ import com.zw.dto.UserSaveDTO;
 import com.zw.entity.TUser;
 import com.zw.result.R;
 import com.zw.service.UserService;
+import com.zw.vo.OwnerVO;
 import com.zw.vo.UserDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -63,6 +64,11 @@ public class UserController {
         return R.OK(userDetailVO);
     }
 
+    /**
+     * 新增用户
+     * @param userSaveDTO
+     * @return
+     */
     @PostMapping("/api/user")
     public R saveUser(@RequestBody UserSaveDTO userSaveDTO){
         // System.out.println(userSaveDTO);
@@ -70,6 +76,11 @@ public class UserController {
         return ret >= 1 ? R.OK() : R.error();
     }
 
+    /**
+     * 更新用户
+     * @param userSaveDTO
+     * @return
+     */
     @PutMapping("/api/user")
     public R updateUser(@RequestBody UserSaveDTO userSaveDTO){
          // System.out.println(userSaveDTO);
@@ -77,17 +88,33 @@ public class UserController {
         return ret >= 1 ? R.OK() : R.error();
     }
 
+    /**
+     * 删除用户
+     * @param id
+     * @return
+     */
     @DeleteMapping("/api/user/{id}")
     public R deleteUser(@PathVariable("id") Integer id){
         int ret = userService.deleteUser(id);
         return ret >= 1 ? R.OK() : R.error();
     }
 
+    /**
+     * 批量删除用户
+     * @param ids
+     * @return
+     */
     @DeleteMapping("/api/user")
     @Transactional
     public R batchDeleteUser(@RequestParam List<Integer> ids){
         // System.out.println(userSaveDTO);
         int ret = userService.batchDeleteUser(ids);
         return ret >= 1 ? R.OK() : R.error();
+    }
+
+    @GetMapping("/api/user/ownerList")
+    public R<List<OwnerVO>> ownerList(){
+        List<OwnerVO> ownerList = userService.getOwnerList();
+        return R.OK(ownerList);
     }
 }
