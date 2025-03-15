@@ -40,4 +40,10 @@ public interface TActivityMapper {
      * @return
      */
     ActivityVO selectDetailById(Integer id);
+
+    /**
+     * 根据id集合批量删除市场活动数据
+     * @param ids
+     */
+    void deleteBatchByIds(List<Integer> ids);
 }

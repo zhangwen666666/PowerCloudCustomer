@@ -19,4 +19,16 @@ public interface ActivityRemarkService {
      * @return
      */
     PageInfo<ActivityRemarkVO> activityRemarkPage(Integer pageNum, Integer pageSize, Integer activityId);
+
+    /**
+     * 修改活动备注
+     * @param tActivityRemark
+     */
+    void editActivityRemark(TActivityRemark tActivityRemark);
+
+    /**
+     * 删除活动备注
+     * @param id
+     */
+    void deleteActivityRemark(Integer id);
 }

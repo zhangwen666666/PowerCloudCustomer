@@ -9,6 +9,8 @@ import com.zw.vo.ActivityVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ActivityController {
     @Autowired
@@ -56,6 +58,25 @@ public class ActivityController {
     @PutMapping("/api/activity")
     public R updateActivity(@RequestBody TActivity tActivity){
         activityService.updateActivity(tActivity);
+        return R.OK();
+    }
+
+
+    /**
+     * 删除活动
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/api/activity/{id}")
+    public R deleteActivity(@PathVariable("id") Integer id){
+        activityService.deleteActivity(id);
+        return R.OK();
+    }
+
+    @DeleteMapping("/api/activity/delBatch")
+    public R deleteBatch(@RequestParam List<Integer> ids){
+        // System.out.println(ids);
+        activityService.deleteBatch(ids);
         return R.OK();
     }
 }

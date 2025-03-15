@@ -27,7 +27,8 @@
     left join t_user tu1 on tu1.id = tar.create_by
     left join t_user tu2 on tu2.id = tar.edit_by
     <where>
-        tar.activity_id = #{activityId}
+        and tar.deleted != 1 or tar.deleted is null
+        and tar.activity_id = #{activityId}
         ${filterSqlDTO.filterSql}
     </where>
     order by tar.edit_time desc

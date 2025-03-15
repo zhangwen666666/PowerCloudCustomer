@@ -92,9 +92,9 @@
 </template>
 
 <script>
-import {doGet} from "../http/httpRequest.js";
+import {doDel, doGet} from "../http/httpRequest.js";
 import {Delete, Edit, Search} from "@element-plus/icons-vue";
-import {messageTip} from "../util/util.js";
+import {messageConfirm, messageTip} from "../util/util.js";
 
 export default {
   name: "ActivityView",
@@ -126,7 +126,8 @@ export default {
       // 市场活动搜索表单验证规则
       activityRules: {
         cost: [{pattern: /^\d+(\.\d{1,2})?$/, message: '必须是数字或两位小数', trigger: 'blur'}]
-      }
+      },
+      selectionIds: [] // 多选时所选中的活动id集合
     }
   },
 
@@ -181,9 +182,49 @@ export default {
       this.activityQuery = {};
     },
 
-    delBatch(){},
+    // 删除市场活动
+    del(id){
+      messageConfirm("删除之后不能撤销, 是否确认删除?").then(() => {
+        doDel(`/api/activity/${id}`, {}).then((resp) => {
+          if (resp.data.code === 200) {
+            messageTip("删除成功", "success")
+            this.getActivityList(this.pageNum, this.pageSize);
+          } else {
+            // console.log(resp.data)
+            messageTip("删除失败--" + resp.data.msg, "error")
+          }
+        })
+      }).catch(() => {
+        messageTip("取消删除", "warning")
+      })
+    },
 
-    handleSelectionChange(){},
+    // 批量删除市场活动
+    delBatch(){
+      messageConfirm("删除之后不能撤销, 是否确认删除?").then(() => {
+        doDel("/api/activity/delBatch", {ids: this.selectionIds.join(",")}).then((resp) => {
+          if (resp.data.code === 200) {
+            messageTip("批量删除成功", "success")
+            this.getActivityList(this.pageNum, this.pageSize);
+          } else {
+            // console.log(resp.data)
+            messageTip("批量删除失败--" + resp.data.msg, "error")
+          }
+        })
+      }).catch(() => {
+        messageTip("取消删除", "warning")
+      })
+    },
+
+    // 点击多选按钮时触发该回调函数
+    handleSelectionChange(selections){
+      this.selectionIds = []
+      selections.forEach((item) => {
+        //console.log(item.id)
+        this.selectionIds.push(item.id)
+      })
+      // console.log(this.selectionIds)
+    },
   }
 }
 </script>

@@ -5,6 +5,8 @@ import com.zw.dto.ActivityPageQueryDTO;
 import com.zw.entity.TActivity;
 import com.zw.vo.ActivityVO;
 
+import java.util.List;
+
 public interface ActivityService {
     /**
      * 分页查询活动数据
@@ -32,4 +34,16 @@ public interface ActivityService {
      * @param tActivity
      */
     void updateActivity(TActivity tActivity);
+
+    /**
+     * 删除活动数据
+     * @param id
+     */
+    void deleteActivity(Integer id);
+
+    /**
+     * 根据id集合批量删除活动数据
+     * @param ids
+     */
+    void deleteBatch(List<Integer> ids);
 }

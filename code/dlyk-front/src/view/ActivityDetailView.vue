@@ -72,12 +72,12 @@
     <el-table-column property="createrName" label="备注人" show-overflow-tooltip/>
     <el-table-column property="editTime" label="编辑时间" show-overflow-tooltip/>
     <el-table-column property="editorName" label="编辑人" show-overflow-tooltip/>
-    <el-table-column label="操作">
+    <el-table-column label="操作" width="120px">
       <template #default="scope">
         <!--修改按钮-->
         <el-button type="primary" :icon="Edit" circle
-                   @click=""/>
-        <el-button type="danger" :icon="Delete" circle @click=""/><!--删除按钮-->
+                   @click="edit(scope.row)"/>
+        <el-button type="danger" :icon="Delete" circle @click="delRemark(scope.row.id)"/><!--删除按钮-->
       </template>
     </el-table-column>
   </el-table>
@@ -93,11 +93,35 @@
       @prev-click="toPage"
       @next-click="toPage"
   />
+
+  <!-- 编辑活动备注的对话框 -->
+  <el-dialog v-model="dialogVisible" title="编辑备注" center width="60%" draggable>
+    <!-- 表单内容 -->
+    <el-form ref="editRefForm" :model="editRemark" :rules="remarkRules" label-width="110px">
+      <el-form-item label="活动备注" prop="noteContent">
+        <el-input
+            v-model="editRemark.noteContent"
+            :rows="9"
+            type="textarea"
+            placeholder="请输入活动备注"
+        />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="editRemarkSubmit">
+          提交
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 
 <script>
-import {doGet, doPost, doPut} from "../http/httpRequest.js";
+import {doDel, doGet, doPost, doPut} from "../http/httpRequest.js";
 import {messageConfirm, messageTip} from "../util/util.js";
 import {Delete, Edit} from "@element-plus/icons-vue";
 
@@ -112,6 +136,7 @@ export default {
     }
   },
   inject: ['reload'],
+
   data() {
     return {
       activityDetail: {},// 活动详情对象
@@ -126,6 +151,8 @@ export default {
       pageNum: 1, // 当前备注页
       pageSize: 5, // 每页显示多少条备注
       total: 0, // 备注总数
+      dialogVisible: false, // 编辑活动备注弹窗是否弹出
+      editRemark: {}, // 编辑备注所绑定的对象
     }
   },
   mounted() {
@@ -153,14 +180,18 @@ export default {
           // 表单验证未通过，不能提交表单
           return
         }
-        doPost("api/activity/remark", this.remark).then((resp) => {
-          //console.log(resp)
-          if (resp.data.code === 200) {
-            messageTip("提交成功", "success")
-            this.reload();
-          } else {
-            messageTip("提交失败", "error")
-          }
+        messageConfirm("是否确认提交活动备注").then(() => {
+          doPost("api/activity/remark", this.remark).then((resp) => {
+            //console.log(resp)
+            if (resp.data.code === 200) {
+              messageTip("提交成功", "success")
+              this.reload();
+            } else {
+              messageTip("提交失败", "error")
+            }
+          })
+        }).catch(() => {
+          messageTip("取消提交", "warning")
         })
       })
     },
@@ -185,6 +216,52 @@ export default {
       this.pageNum = pageNum;
       this.loadActivityRemarkList(this.activityDetail.id)
     },
+
+    // 修改活动备注
+    edit(remark){
+      this.dialogVisible = true;
+      this.editRemark = {...remark}; // 创建新对象
+    },
+
+    // 提交修改活动备注
+    editRemarkSubmit(){
+      this.$refs.editRefForm.validate((isValid) => {
+        if (!isValid) {
+          // 表单验证未通过，不能提交表单
+          // alert("表单验证未通过")
+          return
+        }
+        messageConfirm("是否确认修改活动备注").then(() => {
+          doPut("api/activity/remark", this.editRemark).then((resp) => {
+            if (resp.data.code === 200) {
+              messageTip("编辑成功", "success")
+              this.reload();
+            } else {
+              messageTip("编辑失败", "error")
+            }
+          })
+        }).catch(() => {
+          messageTip("取消编辑", "warning")
+          this.dialogVisible = false;
+        })
+      })
+    },
+
+    // 删除活动备注
+    delRemark(id){
+      messageConfirm("是否确认删除活动备注").then(() => {
+        doDel(`api/activity/remark/${id}`).then((resp) => {
+          if (resp.data.code === 200) {
+            messageTip("删除成功", "success")
+            this.reload();
+          }else {
+            messageTip("删除失败", "error")
+          }
+        })
+      }).catch(() => {
+        messageTip("取消删除", "warning")
+      })
+    }
   }
 }
 </script>

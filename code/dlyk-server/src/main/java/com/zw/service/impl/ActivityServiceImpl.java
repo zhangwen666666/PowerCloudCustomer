@@ -56,4 +56,24 @@ public class ActivityServiceImpl implements ActivityService {
     public void updateActivity(TActivity tActivity) {
        tActivityMapper.updateByPrimaryKeySelective(tActivity);
     }
+
+
+    /**
+     * 删除活动数据
+     * @param id
+     */
+    @Override
+    public void deleteActivity(Integer id) {
+        tActivityMapper.deleteByPrimaryKey(id);
+    }
+
+
+    /**
+     * 根据id集合批量删除活动数据
+     * @param ids
+     */
+    @Override
+    public void deleteBatch(List<Integer> ids) {
+       tActivityMapper.deleteBatchByIds(ids);
+    }
 }

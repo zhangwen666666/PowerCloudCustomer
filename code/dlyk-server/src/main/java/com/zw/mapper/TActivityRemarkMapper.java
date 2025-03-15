@@ -20,6 +20,7 @@ public interface TActivityRemarkMapper {
 
     TActivityRemark selectByPrimaryKey(Integer id);
 
+    @AutoFill(OperationType.UPDATE)
     int updateByPrimaryKeySelective(TActivityRemark record);
 
     int updateByPrimaryKey(TActivityRemark record);

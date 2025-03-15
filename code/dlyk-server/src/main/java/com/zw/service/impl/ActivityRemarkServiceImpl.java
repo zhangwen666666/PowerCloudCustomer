@@ -37,4 +37,26 @@ public class ActivityRemarkServiceImpl implements ActivityRemarkService {
         List<ActivityRemarkVO> activityRemarkVOList = tActivityRemarkMapper.selectAll(new FilterSqlDTO(), activityId);
         return new PageInfo<>(activityRemarkVOList);
     }
+
+    /**
+     * 修改活动备注
+     * @param tActivityRemark
+     */
+    @Override
+    public void editActivityRemark(TActivityRemark tActivityRemark) {
+        tActivityRemarkMapper.updateByPrimaryKeySelective(tActivityRemark);
+    }
+
+
+    /**
+     * 删除活动备注 (逻辑删除) deleted 字段设置为1
+     * @param id
+     */
+    @Override
+    public void deleteActivityRemark(Integer id) {
+        TActivityRemark remark = new TActivityRemark();
+        remark.setId(id);
+        remark.setDeleted(1);
+        tActivityRemarkMapper.updateByPrimaryKeySelective(remark);
+    }
 }

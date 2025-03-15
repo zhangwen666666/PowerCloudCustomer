@@ -6,10 +6,7 @@ import com.zw.result.R;
 import com.zw.service.ActivityRemarkService;
 import com.zw.vo.ActivityRemarkVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ActivityRemarkController {
@@ -38,5 +35,28 @@ public class ActivityRemarkController {
     public R<PageInfo<ActivityRemarkVO>> activityRemarkPage(Integer pageNum, Integer pageSize, Integer activityId){
         PageInfo<ActivityRemarkVO> pageInfo = activityRemarkService.activityRemarkPage(pageNum, pageSize, activityId);
         return R.OK(pageInfo);
+    }
+
+    /**
+     * 修改活动备注
+     * @param tActivityRemark
+     * @return
+     */
+    @PutMapping("/api/activity/remark")
+    public R editActivityRemark(@RequestBody TActivityRemark tActivityRemark){
+        activityRemarkService.editActivityRemark(tActivityRemark);
+        return R.OK();
+    }
+
+
+    /**
+     * 删除活动备注
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/api/activity/remark/{id}")
+    public R deleteActivityRemark(@PathVariable Integer id){
+        activityRemarkService.deleteActivityRemark(id);
+        return R.OK();
     }
 }
