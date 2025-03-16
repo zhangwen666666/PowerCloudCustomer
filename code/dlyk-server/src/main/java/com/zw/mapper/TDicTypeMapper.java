@@ -14,4 +14,5 @@ public interface TDicTypeMapper {
     int updateByPrimaryKeySelective(TDicType record);
 
     int updateByPrimaryKey(TDicType record);
+
 }

@@ -27,21 +27,123 @@
     <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
     <result column="edit_by" jdbcType="INTEGER" property="editBy" />
   </resultMap>
+
   <sql id="Base_Column_List">
     id, owner_id, activity_id, full_name, appellation, phone, weixin, qq, email, age, 
     job, year_income, address, need_loan, intention_state, intention_product, `state`, 
     `source`, description, next_contact_time, create_time, create_by, edit_time, edit_by
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from t_clue
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+
+  <resultMap id="CluePageQueryDTOResultMap" type="com.zw.dto.CluePageQueryDTO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="owner_id" jdbcType="INTEGER" property="ownerId" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="full_name" jdbcType="VARCHAR" property="fullName" />
+    <result column="appellation" jdbcType="INTEGER" property="appellation" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="weixin" jdbcType="VARCHAR" property="weixin" />
+    <result column="qq" jdbcType="VARCHAR" property="qq" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="job" jdbcType="VARCHAR" property="job" />
+    <result column="year_income" jdbcType="DECIMAL" property="yearIncome" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="need_loan" jdbcType="INTEGER" property="needLoan" />
+    <result column="intention_state" jdbcType="INTEGER" property="intentionState" />
+    <result column="intention_product" jdbcType="INTEGER" property="intentionProduct" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="source" jdbcType="INTEGER" property="source" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="next_contact_time" jdbcType="TIMESTAMP" property="nextContactTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="edit_by" jdbcType="INTEGER" property="editBy" />
+    <!--关联线索所属人-->
+    <association property="ownerDO">
+      <id column="ownerId" property="id"/>
+      <result column="ownerName" property="name"/>
+    </association>
+    <!--关联活动-->
+    <association property="activityDO">
+      <id column="activityId" property="id"/>
+      <result column="activityName" property="name"/>
+    </association>
+    <!--关联称呼-->
+    <association property="appellationDO">
+      <id column="appellation" property="id"/>
+      <result column="appellationName" property="typeValue"/>
+    </association>
+    <!--是否贷款-->
+    <association property="needLoanDO">
+      <id column="needLoan" property="id"/>
+      <result column="needLoanName" property="typeValue"/>
+    </association>
+    <!--意向状态-->
+    <association property="intentionStateDO">
+      <id column="intentionState" property="id"/>
+      <result column="intentionStateName" property="typeValue"/>
+    </association>
+    <!--意向产品-->
+    <association property="intentionProductDO">
+      <id column="intentionProduct" property="id"/>
+      <result column="intentionProductName" property="name"/>
+    </association>
+    <!--线索状态-->
+    <association property="stateDO">
+      <id column="state" property="id"/>
+      <result column="stateName" property="typeValue"/>
+    </association>
+    <!--线索来源-->
+    <association property="sourceDO">
+      <id column="source" property="id"/>
+      <result column="sourceName" property="typeValue"/>
+    </association>
+  </resultMap>
+
+  <select id="selectAll" resultMap="CluePageQueryDTOResultMap">
+    select
+        tc.*,
+        tu1.id ownerId, tu1.name ownerName,
+        ta.id activityId, ta.name activityName,
+        tdv.id appellationId, tdv.type_value appellationName,
+        tdv2.id needLoanId, tdv2.type_value needLoanName,
+        tdv3.id intentionStateId, tdv3.type_value intentionStateName,
+        tp.id intentionProductId, tp.name intentionProductName,
+        tdv4.id stateId, tdv4.type_value stateName,
+        tdv5.id sourceId, tdv5.type_value sourceName
+    from t_clue tc
+    left join t_user tu1 on tu1.id = tc.owner_id
+    left join t_activity ta on ta.id = tc.activity_id
+    left join t_dic_value tdv on tdv.id = tc.appellation
+    left join t_dic_value tdv2 on tdv2.id = tc.need_loan
+    left join t_dic_value tdv3 on tdv3.id = tc.intention_state
+    left join t_product tp on tp.id = tc.intention_product
+    left join t_dic_value tdv4 on tdv4.id = tc.state
+    left join t_dic_value tdv5 on tdv5.id = tc.source
+    order by tc.edit_time desc
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_clue
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+  <delete id="batchDelete">
+    delete from t_clue where id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </delete>
+
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.zw.entity.TClue" useGeneratedKeys="true">
     insert into t_clue (owner_id, activity_id, full_name, 
       appellation, phone, weixin, 
@@ -60,6 +162,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER}, #{editTime,jdbcType=TIMESTAMP}, 
       #{editBy,jdbcType=INTEGER})
   </insert>
+
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.zw.entity.TClue" useGeneratedKeys="true">
     insert into t_clue
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -205,6 +308,25 @@
       </if>
     </trim>
   </insert>
+
+  <insert id="saveClueList">
+    insert into t_clue(owner_id, activity_id, full_name,
+      appellation, phone, weixin,
+      qq, email, age, job,
+      year_income, address, need_loan,
+      intention_state, intention_product, `state`,
+      `source`, description, next_contact_time,
+      create_time, create_by, edit_time,
+      edit_by)
+    values
+    <foreach collection="cachedDataList" item="c" separator=",">
+        (#{c.ownerId}, #{c.activityId}, #{c.fullName}, #{c.appellation}, #{c.phone}, #{c.weixin},
+         #{c.qq}, #{c.email}, #{c.age}, #{c.job}, #{c.yearIncome}, #{c.address}, #{c.needLoan},
+         #{c.intentionState}, #{c.intentionProduct}, #{c.state}, #{c.source}, #{c.description},
+         #{c.nextContactTime}, #{c.createTime}, #{c.createBy}, #{c.editTime}, #{c.editBy})
+    </foreach>
+  </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.zw.entity.TClue">
     update t_clue
     <set>
@@ -280,6 +402,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.zw.entity.TClue">
     update t_clue
     set owner_id = #{ownerId,jdbcType=INTEGER},
