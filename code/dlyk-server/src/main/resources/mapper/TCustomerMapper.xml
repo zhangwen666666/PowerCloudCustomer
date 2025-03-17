@@ -22,7 +22,110 @@
     from t_customer
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+
+  <resultMap id="CustomerVOResultMap" type="com.zw.vo.CustomerVO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="clue_id" jdbcType="INTEGER" property="clueId" />
+    <result column="product" jdbcType="INTEGER" property="product" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="next_contact_time" jdbcType="TIMESTAMP" property="nextContactTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="edit_by" jdbcType="INTEGER" property="editBy" />
+    <association property="clueDO">
+      <id column="clueId" property="id"/>
+      <result column="full_name" property="fullName" />
+      <result column="phone" property="phone" />
+      <result column="weixin" property="weixin" />
+    </association>
+    <association property="ownerDO">
+      <id column="ownerId" property="id"/>
+      <result column="ownerName" property="name" />
+    </association>
+    <association property="activityDO">
+      <id column="activityId" property="id"/>
+      <result column="activityName" property="name"/>
+    </association>
+    <association property="appellationDO">
+      <id column="appellationId" property="id"/>
+      <result column="appellationName" property="typeValue" />
+    </association>
+    <association property="needLoanDO">
+      <id column="needLoanId" property="id"/>
+      <result column="needLoanName" property="typeValue" />
+    </association>
+    <association property="intentionStateDO">
+      <id column="intentionStateId" property="id"/>
+      <result column="intentionStateName" property="typeValue" />
+    </association>
+    <association property="stateDO">
+      <id column="stateId" property="id"/>
+      <result column="stateName" property="typeValue" />
+    </association>
+    <association property="sourceDO">
+      <id column="sourceId" property="id"/>
+      <result column="sourceName" property="typeValue" />
+    </association>
+    <association property="intentionProductDO">
+      <id column="intentionProductId" property="id"/>
+      <result column="intentionProductName" property="name" />
+    </association>
+  </resultMap>
+  
+  <select id="selectAll" resultMap="CustomerVOResultMap">
+      select
+          tc.*,
+          tc1.id clueId, tc1.full_name fullName, tc1.phone, tc1.weixin,
+          tu.id ownerId, tu.name ownerName,
+          ta.id activityId, ta.name activityName,
+          tdv.id appellationId, tdv.type_value appellationName,
+          tdv2.id needLoanId, tdv2.type_value needLoanName,
+          tdv3.id intentionStateId, tdv3.type_value intentionStateName,
+          tdv4.id stateId, tdv4.type_value stateName,
+          tdv5.id sourceId, tdv5.type_value sourceName,
+          tp.id intentionProductId, tp.name intentionProductName
+      from t_customer tc
+      left join t_clue tc1 on tc.clue_id = tc1.id
+      left join t_user tu on tc1.owner_id = tu.id
+      left join t_activity ta on tc1.activity_id = ta.id
+      left join t_dic_value tdv on tc1.appellation = tdv.id
+      left join t_dic_value tdv2 on tc1.need_loan = tdv2.id
+      left join t_dic_value tdv3 on tc1.intention_state= tdv3.id
+      left join t_dic_value tdv4 on tc1.state = tdv4.id
+      left join t_dic_value tdv5 on tc1.source = tdv5.id
+      left join t_product tp on tc.product = tp.id
+      <where>
+        ${filterSql}
+      </where>
+      order by tc.create_time desc
+  </select>
+
+  <select id="selectAllExcel" resultType="com.zw.vo.CustomerExcelVO">
+      select
+      tc.*,
+      tc1.full_name fullName, tc1.phone, tc1.weixin, tc1.qq, tc1.email,
+      tc1.age, tc1.job,tc1.year_income yearIncome, tc1.address,
+      tu.name ownerName,
+      ta.name activityName,
+      tdv.type_value appellationName,
+      tdv2.type_value needLoanName,
+      tdv5.type_value sourceName,
+      tp.name productName
+      from t_customer tc
+      left join t_clue tc1 on tc.clue_id = tc1.id
+      left join t_user tu on tc1.owner_id = tu.id
+      left join t_activity ta on tc1.activity_id = ta.id
+      left join t_dic_value tdv on tc1.appellation = tdv.id
+      left join t_dic_value tdv2 on tc1.need_loan = tdv2.id
+      left join t_dic_value tdv5 on tc1.source = tdv5.id
+      left join t_product tp on tc.product = tp.id
+      <where>
+        ${filterSql}
+      </where>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_customer
     where id = #{id,jdbcType=INTEGER}
   </delete>

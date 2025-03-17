@@ -42,7 +42,7 @@
   </select>
 
 
-  <resultMap id="CluePageQueryDTOResultMap" type="com.zw.dto.CluePageQueryDTO">
+  <resultMap id="ClueVOResultMap" type="com.zw.vo.ClueVO">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="owner_id" jdbcType="INTEGER" property="ownerId" />
     <result column="activity_id" jdbcType="INTEGER" property="activityId" />
@@ -109,7 +109,7 @@
     </association>
   </resultMap>
 
-  <select id="selectAll" resultMap="CluePageQueryDTOResultMap">
+  <select id="selectAll" resultMap="ClueVOResultMap">
     select
         tc.*,
         tu1.id ownerId, tu1.name ownerName,
@@ -130,6 +130,29 @@
     left join t_dic_value tdv4 on tdv4.id = tc.state
     left join t_dic_value tdv5 on tdv5.id = tc.source
     order by tc.edit_time desc
+  </select>
+
+  <select id="detailByPrimaryKey" resultMap="ClueVOResultMap">
+    select
+      tc.*,
+      tu1.id ownerId, tu1.name ownerName,
+      ta.id activityId, ta.name activityName,
+      tdv.id appellationId, tdv.type_value appellationName,
+      tdv2.id needLoanId, tdv2.type_value needLoanName,
+      tdv3.id intentionStateId, tdv3.type_value intentionStateName,
+      tp.id intentionProductId, tp.name intentionProductName,
+      tdv4.id stateId, tdv4.type_value stateName,
+      tdv5.id sourceId, tdv5.type_value sourceName
+    from t_clue tc
+           left join t_user tu1 on tu1.id = tc.owner_id
+           left join t_activity ta on ta.id = tc.activity_id
+           left join t_dic_value tdv on tdv.id = tc.appellation
+           left join t_dic_value tdv2 on tdv2.id = tc.need_loan
+           left join t_dic_value tdv3 on tdv3.id = tc.intention_state
+           left join t_product tp on tp.id = tc.intention_product
+           left join t_dic_value tdv4 on tdv4.id = tc.state
+           left join t_dic_value tdv5 on tdv5.id = tc.source
+    where tc.id = #{id}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

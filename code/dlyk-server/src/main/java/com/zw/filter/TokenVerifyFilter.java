@@ -40,6 +40,10 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
             return;
         }
         String authorization = request.getHeader("Authorization"); // 前端携带的jwt
+        if (requestURI.equals("/api/exportExcel")){
+            // 导出excel时，token是在请求的url中的
+            authorization = request.getParameter("Authorization");
+        }
         if (!StringUtils.hasText(authorization)){
             // 前端携带的jwt为空
             R<String> result = R.error(901,"token为空");

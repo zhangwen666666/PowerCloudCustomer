@@ -37,7 +37,8 @@
       <template #default="scope">
         <!--修改按钮-->
         <el-button :icon="Search" circle @click="view(scope.row.id)"/><!--查看详情按钮-->
-        <el-button type="primary" :icon="Edit" circle @click="edit(scope.row.id)"/><!--修改按钮-->
+        <el-button type="primary" :icon="Edit" circle
+                   @click="() => this.$router.push(`/dashboard/clue/edit/${scope.row.id}`)"/><!--修改按钮-->
         <el-button type="danger" :icon="Delete" circle @click="del(scope.row.id)"/><!--删除按钮-->
       </template>
     </el-table-column>
@@ -227,7 +228,12 @@ export default {
       }).catch(() => {
         messageTip("取消删除", "warning")
       })
-    }
+    },
+
+    // 查看线索详情
+    view(id){
+      this.$router.push(`/dashboard/clue/detail/${id}`);
+    },
   }
 }
 </script>

@@ -76,4 +76,14 @@ public class ActivityServiceImpl implements ActivityService {
     public void deleteBatch(List<Integer> ids) {
        tActivityMapper.deleteBatchByIds(ids);
     }
+
+    /**
+     * 查询所有活动数据
+     * @return
+     *
+    */
+    @Override
+    public List<TActivity> getAllActivity() {
+        return tActivityMapper.getAll();
+    }
 }

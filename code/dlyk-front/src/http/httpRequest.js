@@ -86,3 +86,19 @@ export function removeToken() {
     window.localStorage.removeItem(getTokenName())
     window.sessionStorage.removeItem(getTokenName())
 }
+
+export function getToken() {
+    let token = window.sessionStorage.getItem(getTokenName());
+    if (!token){
+        // token为空，说明是可能是存储在localStorage
+        token = window.localStorage.getItem(getTokenName());
+    }
+    if (token){
+        // token获取到了
+        return token;
+    }
+    // 没拿到token，则跳转到登录页面
+    messageTip("登录状态异常，请重新登录", 'error');
+    removeToken();
+    window.location.href = "/";
+}

@@ -46,4 +46,11 @@ public interface ActivityService {
      * @param ids
      */
     void deleteBatch(List<Integer> ids);
+
+    /**
+     * 查询所有活动数据
+     * @return
+     */
+    List<TActivity> getAllActivity();
+
 }

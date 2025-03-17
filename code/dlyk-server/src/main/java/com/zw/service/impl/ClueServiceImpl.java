@@ -3,12 +3,12 @@ package com.zw.service.impl;
 import com.alibaba.excel.EasyExcel;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.zw.dto.CluePageQueryDTO;
 import com.zw.dto.FilterSqlDTO;
 import com.zw.entity.TClue;
 import com.zw.listener.UploadDataListener;
 import com.zw.mapper.TClueMapper;
 import com.zw.service.ClueService;
+import com.zw.vo.ClueVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,9 +28,9 @@ public class ClueServiceImpl implements ClueService {
      * @return
      */
     @Override
-    public PageInfo<CluePageQueryDTO> cluePage(Integer pageNum, Integer pageSize) {
+    public PageInfo<ClueVO> cluePage(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<CluePageQueryDTO> cluePagelist = tClueMapper.selectAll(new FilterSqlDTO());
+        List<ClueVO> cluePagelist = tClueMapper.selectAll(new FilterSqlDTO());
         return new PageInfo<>(cluePagelist);
     }
 
@@ -62,5 +62,44 @@ public class ClueServiceImpl implements ClueService {
     @Override
     public void batchDelete(List<Integer> ids) {
         tClueMapper.batchDelete(ids);
+    }
+
+    /**
+     * 检查手机号是否存在
+     * @param phone
+     * @return
+     */
+    @Override
+    public boolean checkPhone(String phone) {
+        int count = tClueMapper.selectByCount(phone);
+        return count > 0;
+    }
+
+    /**
+     * 新增线索
+     * @param tClue
+     */
+    @Override
+    public void saveClue(TClue tClue) {
+       tClueMapper.insertSelective(tClue);
+    }
+
+    /**
+     * 根据id查询线索详情
+     * @param id
+     * @return
+     */
+    @Override
+    public ClueVO clueDetail(Integer id) {
+        return tClueMapper.detailByPrimaryKey(id);
+    }
+
+    /**
+     * 编辑线索
+     * @param tClue
+     */
+    @Override
+    public void updateClue(TClue tClue) {
+        tClueMapper.updateByPrimaryKeySelective(tClue);
     }
 }

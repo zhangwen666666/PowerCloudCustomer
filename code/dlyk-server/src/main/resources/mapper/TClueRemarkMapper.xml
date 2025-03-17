@@ -22,6 +22,43 @@
     from t_clue_remark
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <resultMap id="clueRemarkResultMap" type="com.zw.vo.ClueRemarkVO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="clue_id" jdbcType="INTEGER" property="clueId" />
+    <result column="note_way" jdbcType="INTEGER" property="noteWay" />
+    <result column="note_content" jdbcType="VARCHAR" property="noteContent" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="edit_by" jdbcType="INTEGER" property="editBy" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+    <result column="createrName" jdbcType="VARCHAR" property="createrName" />
+    <result column="editorName" jdbcType="VARCHAR" property="editorName" />
+    <association property="noteWayDO" javaType="com.zw.entity.TDicValue">
+      <id property="id" column="noteWayId" />
+      <result column="typeValue" jdbcType="VARCHAR" property="typeValue" />
+    </association>
+  </resultMap>
+
+  <select id="selectAll" resultMap="clueRemarkResultMap">
+    select
+        tcr.*,
+        tu1.name as createrName,
+        tu2.name as editorName,
+        tdv.id as noteWayId, tdv.type_value as typeValue
+    from t_clue_remark tcr
+    left join t_user tu1 on tu1.id = tcr.create_by
+    left join t_user tu2 on tu2.id = tcr.edit_by
+    left join t_dic_value tdv on tcr.note_way = tdv.id
+    <where>
+      and (tcr.deleted != 1 or tcr.deleted is null)
+      and tcr.clue_id = #{clueId}
+      ${filterSqlDTO.filterSql}
+    </where>
+    order by tcr.edit_time desc
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_clue_remark
     where id = #{id,jdbcType=INTEGER}

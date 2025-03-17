@@ -4,6 +4,7 @@ import com.zw.entity.TDicValue;
 import com.zw.entity.TProduct;
 import com.zw.mapper.TDicValueMapper;
 import com.zw.mapper.TProductMapper;
+import com.zw.service.ActivityService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class DataTask {
     private TDicValueMapper tDicValueMapper;
     @Autowired
     private TProductMapper tProductMapper;
+    @Autowired
+    private ActivityService activityService;
 
     public static Map<String,Integer> dicCacheMap;
     public static Map<String,Integer> productCacheMap;

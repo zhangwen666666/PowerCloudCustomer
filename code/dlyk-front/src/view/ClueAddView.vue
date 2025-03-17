@@ -47,7 +47,7 @@
       </el-select>
     </el-form-item>
 
-    <el-form-item label="手机" v-if="clue.id > 0"><!--此时是编辑-->
+    <el-form-item label="手机" v-if="isEdit"><!--此时是编辑-->
       <el-input v-model="clue.phone" disabled/>
     </el-form-item>
 
@@ -178,7 +178,8 @@
 </template>
 
 <script>
-import {doGet} from "../http/httpRequest.js";
+import {doGet, doPost, doPut} from "../http/httpRequest.js";
+import {messageTip} from "../util/util.js";
 
 export default {
   name: "ClueAddView",
@@ -221,6 +222,7 @@ export default {
           { min: 5, max: 255, message: '线索描述长度为5-255个字符', trigger: 'blur'},
         ],
       },
+      isEdit: false, // 是否是编辑状态
     }
   },
 
@@ -230,10 +232,15 @@ export default {
     this.loadDicValue('intentionState');
     this.loadDicValue('clueState');
     this.loadDicValue('source');
-    this.loadDicValue('activity');
-    this.loadDicValue('product');
-    // this.loadOwner();
-    // this.loadLoginUser();
+    this.loadProduct();
+    this.loadActivity();
+    this.loadLoginUser();
+    if(this.$route.params.id !== undefined){
+      console.log('编辑页面')
+      // 编辑页面
+      this.isEdit = true;
+      this.loadClue(this.$route.params.id);
+    }
   },
 
   methods: {
@@ -253,13 +260,92 @@ export default {
             this.sourceOptions = resp.data.data;
           } else if (typeCode === 'activity') {
             this.activityOptions = resp.data.data;
-          } else if (typeCode === 'product') {
-            this.productOptions = resp.data.data;
           }
         }
       })
     },
-  }
+
+    // 加载产品下拉框
+    loadProduct(){
+      doGet(`/api/product`, {}).then( resp => {
+        if (resp.data.code === 200) {
+          this.productOptions = resp.data.data;
+        }
+      })
+    },
+
+    // 加载活动下拉框
+    loadActivity(){
+      doGet(`/api/activity`, {}).then( resp => {
+        if (resp.data.code === 200) {
+          this.activityOptions = resp.data.data;
+        }
+      })
+    },
+
+    // 加载当前登录用户
+    loadLoginUser(){
+      doGet("/api/login/info", {}).then((rep) => {
+        // console.log(rep)
+        this.ownerOptions.push(rep.data.data);
+        this.clue.ownerId = rep.data.data.id;
+      })
+    },
+
+    // 验证手机号是否唯一(同一条线索只能被录入一次)
+    // 录入过的手机号不能再录入
+    checkPhone(rule, value, callback){
+      let phone = value; // value就是输入框中的手机号
+      doGet(`/api/clue/checkPhone/${phone}`, {}).then( resp => {
+        if (resp.data.code === 200) {
+          if (resp.data.data) {
+            callback(new Error('手机号已被录入，请重新输入'));
+          } else {
+            callback();
+          }
+        }
+      })
+    },
+
+    // 提交表单
+    submitData(){
+      this.$refs.addRefForm.validate(valid => {
+        if (!valid) {
+          // 验证不通过
+          return;
+        }
+        if(this.isEdit){
+          doPut("api/clue", this.clue).then((resp) => {
+            if (resp.data.code === 200) {
+              messageTip("修改成功", "success");
+              this.$router.push("/dashboard/clue");
+            } else {
+              messageTip("修改失败", "error");
+            }
+          })
+          return;
+        }
+        doPost("api/clue", this.clue).then((resp) => {
+          if (resp.data.code === 200){
+            messageTip("录入成功", "success");
+            this.$router.push("/dashboard/clue");
+          }else {
+            messageTip("录入失败", "error");
+          }
+        })
+      })
+    },
+
+    // 加载线索数据
+    loadClue(id) {
+      // console.log(id)
+      doGet(`/api/clue/${id}`, {}).then( resp => {
+        if (resp.data.code === 200) {
+          this.clue = resp.data.data;
+        }
+      })
+    }
+  },
 }
 </script>
 

@@ -9,7 +9,7 @@
           active-text-color="#ffd04b"
           background-color="#334157"
           class="el-menu-vertical-demo"
-          default-active="2"
+          :default-active="currentRouterPath"
           text-color="#fff"
           style="border-right: 0px solid"
           :collapse="isCollapse"
@@ -47,7 +47,7 @@
             <el-icon><Avatar /></el-icon>
             <span>客户管理</span>
           </template>
-          <el-menu-item index="1-1">
+          <el-menu-item index="/dashboard/customer">
             <el-icon><UserFilled /></el-icon>
             客户管理
           </el-menu-item>
@@ -154,7 +154,8 @@ export default {
     return {
       isCollapse: false, // 控制左侧菜单左右折叠，true是折叠
       user: {}, // 当前登录用户的信息
-      isRouterAlive: true // 控制路由是否重新加载
+      isRouterAlive: true, // 控制路由是否重新加载
+      currentRouterPath: "", // 当前访问的路由路径
     }
   },
 
@@ -166,13 +167,14 @@ export default {
         this.$nextTick(() => {
           this.isRouterAlive = true; // 再设为 true，触发刷新
         });
-      }
+      },
     }
   },
 
   mounted() {
     // 加载当前登录用户
     this.loadLoginUser();
+    this.loadCurrentRouterPath();
   },
 
   methods: {
@@ -209,6 +211,17 @@ export default {
         }
       })
     },
+
+    // 加载当前路由路径
+    loadCurrentRouterPath(){
+      let path = this.$route.path; // /dashboard/clue/add
+      let arr = path.split("/"); // [, dashboard, clue, add]
+      if (arr.length > 3){
+        this.currentRouterPath = "/" + arr[1] + "/" + arr[2];
+        return;
+      }
+      this.currentRouterPath = this.$route.path
+    }
   }
 }
 </script>

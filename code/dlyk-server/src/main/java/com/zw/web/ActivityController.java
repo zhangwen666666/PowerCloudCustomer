@@ -79,4 +79,14 @@ public class ActivityController {
         activityService.deleteBatch(ids);
         return R.OK();
     }
+
+    /**
+     * 获取所有的活动列表
+     * @return
+     */
+    @GetMapping("/api/activity")
+    public R<List<TActivity>> getAllActivity(){
+        List<TActivity> allActivity = activityService.getAllActivity();
+        return R.OK(allActivity);
+    }
 }

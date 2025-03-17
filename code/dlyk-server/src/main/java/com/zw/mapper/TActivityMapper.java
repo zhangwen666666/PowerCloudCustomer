@@ -8,6 +8,7 @@ import com.zw.entity.TActivity;
 import com.zw.enums.OperationType;
 import com.zw.vo.ActivityVO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -46,4 +47,7 @@ public interface TActivityMapper {
      * @param ids
      */
     void deleteBatchByIds(List<Integer> ids);
+
+    @Select("select * from t_activity where start_time <= now() and end_time >= now()")
+    List<TActivity> getAll();
 }

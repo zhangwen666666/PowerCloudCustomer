@@ -1,4 +1,4 @@
-package com.zw.dto;
+package com.zw.vo;
 
 import com.zw.entity.*;
 import lombok.AllArgsConstructor;
@@ -6,9 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class CluePageQueryDTO extends TClue {
+@AllArgsConstructor
+public class ClueVO extends TClue {
     private TUser ownerDO = new TUser(); // 线索所属人
     private TActivity activityDO = new TActivity(); // 关联的活动
     private TDicValue appellationDO = new TDicValue(); // 称呼

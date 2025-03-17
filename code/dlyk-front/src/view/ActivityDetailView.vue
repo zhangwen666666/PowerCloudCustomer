@@ -204,7 +204,7 @@ export default {
         pageSize: this.pageSize
       }).then((resp) => {
         if (resp.data.code === 200) {
-          console.log(resp.data.data)
+          //console.log(resp.data.data)
           this.activityRemarkList = resp.data.data.list;
           this.total = resp.data.data.total;
         }

@@ -46,6 +46,18 @@ const router = createRouter({
                     path: "clue/add",
                     component: () => import('../view/ClueAddView.vue')
                 },
+                {
+                    path: "clue/edit/:id", // 动态路由
+                    component: () => import('../view/ClueAddView.vue')
+                },
+                {
+                    path: "clue/detail/:id", // 动态路由
+                    component: () => import('../view/ClueDetailView.vue')
+                },
+                {
+                    path: "customer", // 动态路由
+                    component: () => import('../view/CustomerView.vue')
+                },
             ]
         }
     ]
