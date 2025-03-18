@@ -7,10 +7,9 @@ import com.zw.service.CustomerService;
 import com.zw.vo.CustomerVO;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class CustomerController {
@@ -46,12 +45,13 @@ public class CustomerController {
      * 导入Excel
      */
     @GetMapping("/api/exportExcel")
-    public void exportExcel(HttpServletResponse response) throws Exception{
+    public void exportExcel(HttpServletResponse response,
+                            @RequestParam(value = "ids", required = false) List<Integer> ids) throws Exception{
         // 设置相应的内容类型是二进制流的形式
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
         // 设置响应头 (告诉浏览器相应的是一个attachment附件，文件名是customer.xlsx)
         response.setHeader("Content-Disposition", "attachment;filename=customer.xlsx");
-        customerService.exportExcel(response);
+        customerService.exportExcel(response, ids);
     }
 }

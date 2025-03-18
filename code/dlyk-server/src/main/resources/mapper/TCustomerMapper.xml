@@ -35,7 +35,7 @@
     <result column="edit_by" jdbcType="INTEGER" property="editBy" />
     <association property="clueDO">
       <id column="clueId" property="id"/>
-      <result column="full_name" property="fullName" />
+      <result column="fullName" property="fullName" />
       <result column="phone" property="phone" />
       <result column="weixin" property="weixin" />
     </association>
@@ -121,7 +121,13 @@
       left join t_dic_value tdv5 on tc1.source = tdv5.id
       left join t_product tp on tc.product = tp.id
       <where>
-        ${filterSql}
+        ${filterSqlDTO.filterSql}
+        <if test="ids != null and ids.size() > 0">
+          and tc.id in
+          <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+          </foreach>
+        </if>
       </where>
     </select>
 

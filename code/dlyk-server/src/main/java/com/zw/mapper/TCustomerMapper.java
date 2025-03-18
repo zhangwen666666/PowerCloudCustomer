@@ -7,6 +7,7 @@ import com.zw.entity.TCustomer;
 import com.zw.enums.OperationType;
 import com.zw.vo.CustomerExcelVO;
 import com.zw.vo.CustomerVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -33,5 +34,7 @@ public interface TCustomerMapper {
     List<CustomerVO> selectAll(FilterSqlDTO filterSqlDTO);
 
     @DataScope(tableAlias = "tc",tableFiled = "create_by")
-    List<CustomerExcelVO> selectAllExcel(FilterSqlDTO filterSqlDTO);
+    List<CustomerExcelVO> selectAllExcel(
+            @Param("filterSqlDTO") FilterSqlDTO filterSqlDTO,
+            @Param("ids") List<Integer> ids);
 }

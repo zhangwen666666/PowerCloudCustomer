@@ -45,6 +45,7 @@
 <script>
 import {doGet, getToken} from "../http/httpRequest.js";
 import axios from "axios";
+import {messageTip} from "../util/util.js";
 
 export default {
   name: "CustomerView",
@@ -81,6 +82,7 @@ export default {
 
     // 多选时触发
     handleSelectionChange(selections){
+      this.multipleSelection = []
       selections.forEach((item) => {
         this.multipleSelection.push(item.id)
       })
@@ -101,18 +103,30 @@ export default {
 
     // 批量导出客户到Excel文件中
     batchExportExcel(){
-      // 1. 向后端发送一个请求
+      this.exportExcel(null);
+    },
+
+    // 将选中的客户导出到Excel文件中
+    chooseExportExcel(){
+      if (this.multipleSelection.length === 0){
+        messageTip("请选择要导出的客户", "warning")
+        return;
+      }
+      this.exportExcel(this.multipleSelection.join(","));
+    },
+
+    // 导出客户到Excel文件中
+    exportExcel(ids){
       let iframe = document.createElement("iframe"); // 创建一个iframe标签
       // 这个iframe标签会自动请求这个地址,并将返回结果输出到浏览器
-      iframe.src = axios.defaults.baseURL + "/api/exportExcel?Authorization=" + getToken();
+      if (ids) {
+        iframe.src = axios.defaults.baseURL + "/api/exportExcel?Authorization=" + getToken() + "&ids=" + ids;
+      } else {
+        iframe.src = axios.defaults.baseURL + "/api/exportExcel?Authorization=" + getToken();
+      }
       document.body.appendChild(iframe); // 将创建的iframe标签做为body的子元素
-
-      // 2. 后端查询数据库的数据，把数据写入到Excel，
-
-      // 3. 然后把Excel以IO流的方式输出到前端浏览器
-
-      // 4. 前端浏览器弹出一个下载框进行文件下载(浏览器实现的，不需要我们去实现)
-    }
+      iframe.style.display = "none"; // 不在页面上显示这个元素
+    },
   }
 }
 </script>

@@ -5,6 +5,8 @@ import com.zw.entity.TCustomer;
 import com.zw.vo.CustomerVO;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.List;
+
 public interface CustomerService {
     /**
      * 线索转客户
@@ -23,6 +25,6 @@ public interface CustomerService {
     /**
      * 导出客户信息到Excel文件中
      */
-    void exportExcel(HttpServletResponse response) throws Exception;
+    void exportExcel(HttpServletResponse response, List<Integer> ids) throws Exception;
 
 }

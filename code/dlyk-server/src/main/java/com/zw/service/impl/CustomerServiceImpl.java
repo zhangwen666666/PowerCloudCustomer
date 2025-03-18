@@ -65,8 +65,8 @@ public class CustomerServiceImpl implements CustomerService {
      * 导出客户信息到Excel文件中
      */
     @Override
-    public void exportExcel(HttpServletResponse response) throws Exception{
-        List<CustomerExcelVO> dataList = tCustomerMapper.selectAllExcel(new FilterSqlDTO());
+    public void exportExcel(HttpServletResponse response, List<Integer> ids) throws Exception{
+        List<CustomerExcelVO> dataList = tCustomerMapper.selectAllExcel(new FilterSqlDTO(), ids);
         // 写入Excel文件
         EasyExcel.write(response.getOutputStream(), CustomerExcelVO.class)
                 .sheet().doWrite(dataList);
