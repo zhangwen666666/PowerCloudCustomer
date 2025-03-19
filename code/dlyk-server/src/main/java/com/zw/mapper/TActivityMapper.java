@@ -50,4 +50,11 @@ public interface TActivityMapper {
 
     @Select("select * from t_activity where start_time <= now() and end_time >= now()")
     List<TActivity> getAll();
+
+    /**
+     * 查询市场活动
+     * @param isEffectiveActivity true有效,false无效，null所有
+     * @return
+     */
+    int selectCount(Boolean isEffectiveActivity);
 }

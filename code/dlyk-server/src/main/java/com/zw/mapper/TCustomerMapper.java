@@ -7,6 +7,7 @@ import com.zw.enums.OperationType;
 import com.zw.vo.CustomerExcelVO;
 import com.zw.vo.CustomerVO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -36,4 +37,7 @@ public interface TCustomerMapper {
     List<CustomerExcelVO> selectAllExcel(
             @Param("filterSqlDTO") FilterSqlDTO filterSqlDTO,
             @Param("ids") List<Integer> ids);
+
+    @Select("select count(0) from t_customer")
+    int selectCount();
 }

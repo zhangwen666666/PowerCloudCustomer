@@ -15,6 +15,10 @@ const router = createRouter({
             component : () => import('../view/DashboardView.vue'),
             children : [
                 {
+                    path: "", // 子路由路径不能以"/"开头
+                    component: () => import('../view/StatisticView.vue')
+                },
+                {
                     path:"user",// 子路由路径不能以"/"开头
                     component: () => import('../view/UserView.vue')
                 },

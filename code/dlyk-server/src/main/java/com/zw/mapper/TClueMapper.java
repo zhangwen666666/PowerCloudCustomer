@@ -53,4 +53,7 @@ public interface TClueMapper {
 
 
     ClueVO detailByPrimaryKey(Integer id);
+
+    @Select("select count(0) from t_clue")
+    int selectCount();
 }

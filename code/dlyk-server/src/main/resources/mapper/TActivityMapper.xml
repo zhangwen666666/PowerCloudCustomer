@@ -68,7 +68,19 @@
     where ta.id = #{id}
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <select id="selectCount" resultType="java.lang.Integer">
+    select count(*) from t_activity
+    <where>
+      <if test="isEffectiveActivity == true">
+        start_time &lt;= now() and end_time &gt;= now()
+      </if>
+      <if test="isEffectiveActivity == false">
+        start_time &gt; now() or end_time &lt; now()
+      </if>
+    </where>
+  </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_activity
     where id = #{id,jdbcType=INTEGER}
   </delete>
