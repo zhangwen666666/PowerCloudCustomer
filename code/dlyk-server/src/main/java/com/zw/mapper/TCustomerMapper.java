@@ -1,7 +1,6 @@
 package com.zw.mapper;
 
 import com.zw.annotations.AutoFill;
-import com.zw.annotations.DataScope;
 import com.zw.dto.FilterSqlDTO;
 import com.zw.entity.TCustomer;
 import com.zw.enums.OperationType;
@@ -30,10 +29,10 @@ public interface TCustomerMapper {
      * @param filterSqlDTO
      * @return
      */
-    @DataScope(tableAlias = "tc",tableFiled = "create_by")
+    //@DataScope(tableAlias = "tc",tableFiled = "create_by")
     List<CustomerVO> selectAll(FilterSqlDTO filterSqlDTO);
 
-    @DataScope(tableAlias = "tc",tableFiled = "create_by")
+    //@DataScope(tableAlias = "tc",tableFiled = "create_by")
     List<CustomerExcelVO> selectAllExcel(
             @Param("filterSqlDTO") FilterSqlDTO filterSqlDTO,
             @Param("ids") List<Integer> ids);

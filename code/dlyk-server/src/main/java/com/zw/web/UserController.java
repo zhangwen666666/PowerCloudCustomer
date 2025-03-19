@@ -112,6 +112,10 @@ public class UserController {
         return ret >= 1 ? R.OK() : R.error();
     }
 
+    /**
+     * 查询负责人列表
+     * @return
+     */
     @GetMapping("/api/user/ownerList")
     public R<List<OwnerVO>> ownerList(){
         List<OwnerVO> ownerList = userService.getOwnerList();

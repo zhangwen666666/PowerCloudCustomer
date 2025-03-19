@@ -38,8 +38,9 @@
         <!--修改按钮-->
         <el-button :icon="Search" circle @click="view(scope.row.id)"/><!--查看详情按钮-->
         <el-button type="primary" :icon="Edit" circle
-                   @click="() => this.$router.push(`/dashboard/clue/edit/${scope.row.id}`)"/><!--修改按钮-->
-        <el-button type="danger" :icon="Delete" circle @click="del(scope.row.id)"/><!--删除按钮-->
+                   @click="() => this.$router.push(`/dashboard/clue/edit/${scope.row.id}`)"
+                   v-has-permission="'clue:edit'"/><!--修改按钮-->
+        <el-button type="danger" :icon="Delete" circle @click="del(scope.row.id)" v-has-permission="'clue:delete'"/><!--删除按钮-->
       </template>
     </el-table-column>
   </el-table>
@@ -161,7 +162,8 @@ export default {
           this.clueList = resp.data.data.list;
           this.total = resp.data.data.total;
         }else {
-          this.$message.error("系统繁忙，请稍后重试")
+          // this.$message.error("系统繁忙，请稍后重试")
+          messageTip(resp.data.msg, "error")
         }
       })
     },
@@ -204,7 +206,7 @@ export default {
             messageTip("删除成功", "success")
             this.reload();
           }else {
-            messageTip("删除失败", "error")
+            messageTip("删除失败," + resp.data.msg, "error")
           }
         })
       }).catch(() => {
@@ -222,7 +224,7 @@ export default {
             messageTip("删除成功", "success")
             this.reload();
           }else {
-            messageTip("删除失败", "error")
+            messageTip("删除失败," + resp.data.msg, "error")
           }
         })
       }).catch(() => {

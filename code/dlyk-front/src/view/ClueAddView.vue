@@ -179,7 +179,7 @@
 
 <script>
 import {doGet, doPost, doPut} from "../http/httpRequest.js";
-import {messageTip} from "../util/util.js";
+import {emitter, messageTip} from "../util/util.js";
 
 export default {
   name: "ClueAddView",
@@ -234,7 +234,7 @@ export default {
     this.loadDicValue('source');
     this.loadProduct();
     this.loadActivity();
-    this.loadLoginUser();
+    //this.loadLoginUser();
     if(this.$route.params.id !== undefined){
       console.log('编辑页面')
       // 编辑页面

@@ -14,8 +14,31 @@ import App from './App.vue' // 从./App.vue页面导入App组件
 // import LoginView from "./view/LoginView.vue";
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import router from './router/router.js';
+import {doGet} from "./http/httpRequest.js";
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
+
+app.directive('has-permission',(el, binding) => {
+    doGet("/api/login/info", {}).then(res => {
+        let flag = false;
+        if (res.data.code === 200) {
+            let user = res.data.data;
+            let permissionList = user.permissionList;
+            // console.log(permissionList)
+            for (let key in permissionList){
+                //alert(key);
+                //console.log(permissionList[key].code)
+                if (permissionList[key].code === binding.value){
+                    flag = true;
+                }
+            }
+        }
+        if (!flag){
+            el.parentNode.removeChild(el);
+        }
+    })
+})
+
 app.use(ElementPlus,{locale: zhCn}).use(router).mount('#app')

@@ -5,14 +5,15 @@ import com.github.pagehelper.PageInfo;
 import com.zw.consts.Constant;
 import com.zw.dto.FilterSqlDTO;
 import com.zw.dto.UserSaveDTO;
+import com.zw.entity.TPermission;
 import com.zw.entity.TRole;
 import com.zw.entity.TUser;
 import com.zw.manager.RedisManager;
+import com.zw.mapper.TPermissionMapper;
 import com.zw.mapper.TRoleMapper;
 import com.zw.mapper.TUserMapper;
 import com.zw.service.UserService;
 import com.zw.util.CacheUtil;
-import com.zw.util.UserInfoUtil;
 import com.zw.vo.OwnerVO;
 import com.zw.vo.UserDetailVO;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private TRoleMapper tRoleMapper;
     @Autowired
     private RedisManager redisManager;
+    @Autowired
+    private TPermissionMapper tPermissionMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -42,8 +45,16 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new UsernameNotFoundException("登录账号不存在");
         }
+
         List<TRole> tRoleList = tRoleMapper.selectByUserId(user.getId());
         user.setRoleList(tRoleList);
+
+        List<TPermission> menuPermissionList = tPermissionMapper.selectMenuPermissionByUserId(user.getId());
+        user.setMenuPermissionList(menuPermissionList);
+
+        List<TPermission> buttonPermissionList = tPermissionMapper.selectButtonPermissionByUserId(user.getId());
+        user.setPermissionList(buttonPermissionList);
+
         return user;
     }
 
@@ -138,11 +149,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<OwnerVO> getOwnerList() {
-        // 如果不是管理员，则只查询自己的活动，因此负责人列表也只有自己
-        if (!UserInfoUtil.isAdmin()) {
-            OwnerVO ownerVO = new OwnerVO(UserInfoUtil.getCurrentUser().getId(), UserInfoUtil.getCurrentUser().getName());
-            return List.of(ownerVO);
-        }
+//        // 如果不是管理员，则只查询自己的活动，因此负责人列表也只有自己
+//        if (!UserInfoUtil.isAdmin()) {
+//            OwnerVO ownerVO = new OwnerVO(UserInfoUtil.getCurrentUser().getId(), UserInfoUtil.getCurrentUser().getName());
+//            return List.of(ownerVO);
+//        }
         // 使用带有缓存的查询工具方法，获取所有的负责人姓名和id
         return CacheUtil.getCacheData(() -> {
             // 从缓存查数据

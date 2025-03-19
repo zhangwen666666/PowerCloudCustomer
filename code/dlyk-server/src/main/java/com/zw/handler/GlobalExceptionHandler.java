@@ -2,6 +2,7 @@ package com.zw.handler;
 
 import com.zw.result.R;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,5 +31,10 @@ public class GlobalExceptionHandler {
         // e.printStackTrace();
         // System.out.println("handException执行.....Exception");
         return R.error("数据库操作异常");
+    }
+
+    @ExceptionHandler(value = AuthorizationDeniedException.class)
+    public R authorizationDeniedException(AuthorizationDeniedException e){
+        return R.builder().code(403).msg("权限不足").build();
     }
 }

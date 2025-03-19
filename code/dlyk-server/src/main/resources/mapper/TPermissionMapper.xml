@@ -21,6 +21,53 @@
     from t_permission
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <resultMap id="PermissionResultMap" type="com.zw.entity.TPermission">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="order_no" jdbcType="INTEGER" property="orderNo" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="component" jdbcType="VARCHAR" property="component" />
+    <!--一对多关联-->
+    <collection property="subPermissionList" ofType="com.zw.entity.TPermission">
+      <id column="cid" jdbcType="INTEGER" property="id" />
+      <result column="cname" jdbcType="VARCHAR" property="name" />
+      <result column="curl" jdbcType="VARCHAR" property="url" />
+      <result column="cicon" jdbcType="VARCHAR" property="icon" />
+    </collection>
+  </resultMap>
+
+  <select id="selectMenuPermissionByUserId" resultMap="PermissionResultMap">
+    select
+        tp.*,
+        childTp.id cid, childTp.name cname, childTp.url curl, childTp.icon cicon
+    from t_permission tp
+    left join t_permission childTp on childTp.parent_id = tp.id
+    left join t_role_permission trp on tp.id = trp.permission_id
+    left join t_role tr on trp.role_id = tr.id
+    left join t_user_role tur on tur.role_id = tr.id
+    where
+        tur.user_id = #{userId}
+        and tp.type='menu'
+        and childTp.type='menu'
+  </select>
+
+  <select id="selectButtonPermissionByUserId" resultType="com.zw.entity.TPermission">
+    select
+      tp.*
+    from t_permission tp
+           left join t_role_permission trp on tp.id = trp.permission_id
+           left join t_role tr on trp.role_id = tr.id
+           left join t_user_role tur on tur.role_id = tr.id
+    where
+      tur.user_id = #{userId}
+      and tp.type='button'
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_permission
     where id = #{id,jdbcType=INTEGER}

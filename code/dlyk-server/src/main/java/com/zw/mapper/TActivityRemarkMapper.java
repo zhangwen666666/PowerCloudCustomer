@@ -26,7 +26,7 @@ public interface TActivityRemarkMapper {
     int updateByPrimaryKey(TActivityRemark record);
 
     /**
-     * 查询你活动备注数据
+     * 查询活动备注数据
      * @param filterSqlDTO
      * @param activityId
      * @return

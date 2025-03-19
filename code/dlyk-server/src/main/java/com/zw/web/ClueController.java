@@ -6,6 +6,7 @@ import com.zw.result.R;
 import com.zw.service.ClueService;
 import com.zw.vo.ClueVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,7 @@ public class ClueController {
      * @param pageSize
      * @return
      */
+    @PreAuthorize(value="hasAuthority('clue:list')")
     @GetMapping("/api/clue/list")
     public R<PageInfo<ClueVO>> cluePage(Integer pageNum, Integer pageSize){
         PageInfo<ClueVO> pageInfo = clueService.cluePage(pageNum, pageSize);
@@ -34,6 +36,7 @@ public class ClueController {
      * @return
      * @throws Exception
      */
+    @PreAuthorize(value="hasAuthority('clue:import')")
     @PostMapping("/api/importExcel")
     public R importExcel(MultipartFile file) throws Exception {
         // System.out.println(file);
@@ -46,6 +49,7 @@ public class ClueController {
      * @param id
      * @return
      */
+    @PreAuthorize(value="hasAuthority('clue:delete')")
     @DeleteMapping("/api/clue/{id}")
     public R deleteClueById(@PathVariable Integer id){
         clueService.deleteClueById(id);
@@ -57,6 +61,7 @@ public class ClueController {
      * @param ids
      * @return
      */
+    @PreAuthorize(value="hasAuthority('clue:delete')")
     @DeleteMapping("/api/clue/batchDelete")
     public R batchDelete(@RequestParam List<Integer> ids){
         clueService.batchDelete(ids);
@@ -78,6 +83,7 @@ public class ClueController {
      * 新增线索
      * @param tClue
      */
+    @PreAuthorize(value="hasAuthority('clue:add')")
     @PostMapping("api/clue")
     public R saveClue(@RequestBody TClue tClue){
         clueService.saveClue(tClue);
@@ -89,6 +95,7 @@ public class ClueController {
      * @param id
      * @return
      */
+    @PreAuthorize("hasAuthority('clue:view')")
     @GetMapping("/api/clue/{id}")
     public R<ClueVO> clueDetail(@PathVariable("id") Integer id){
         ClueVO clueVO = clueService.clueDetail(id);
@@ -100,6 +107,7 @@ public class ClueController {
      * @param tClue
      * @return
      */
+    @PreAuthorize("hasAuthority('clue:edit')")
     @PutMapping("api/clue")
     public R updateClue(@RequestBody TClue tClue){
         clueService.updateClue(tClue);

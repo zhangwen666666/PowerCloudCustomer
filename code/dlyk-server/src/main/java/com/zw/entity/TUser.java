@@ -110,8 +110,12 @@ public class TUser implements Serializable , UserDetails {
     /**
      * 用户的权限列表（存放权限标识符）
      */
-    @JsonIgnore
-    private List<String> permissionList;
+    private List<TPermission> permissionList;
+
+    /**
+     * 用户的菜单列表
+     */
+    private List<TPermission> menuPermissionList;
 
     // --------------------实现UserDetails接口的7个方法----------------------
 
@@ -127,8 +131,8 @@ public class TUser implements Serializable , UserDetails {
         }
         // 权限标识符
         if (!ObjectUtils.isEmpty(permissionList)) {
-            permissionList.forEach(permission -> {
-                list.add(new SimpleGrantedAuthority(permission));
+            this.getPermissionList().forEach(permission -> {
+                list.add(new SimpleGrantedAuthority(permission.getCode()));
             });
         }
         return list;

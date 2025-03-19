@@ -1,7 +1,9 @@
 package com.zw.entity;
 
-import java.io.Serializable;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 权限表
@@ -32,6 +34,8 @@ public class TPermission implements Serializable {
      * 菜单对应要渲染的Vue组件名称
      */
     private String component;
+
+    private List<TPermission> subPermissionList; // 关联的子菜单
 
     private static final long serialVersionUID = 1L;
 }

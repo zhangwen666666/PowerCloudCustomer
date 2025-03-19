@@ -31,7 +31,7 @@ public interface TClueRemarkMapper {
      * @param clueId
      * @return
      */
-    @DataScope(tableAlias = "tcr",tableFiled = "create_by")
+     @DataScope(tableAlias = "tcr",tableFiled = "create_by")
     List<ClueRemarkVO> selectAll(
             @Param("filterSqlDTO") FilterSqlDTO filterSqlDTO,
             @Param("clueId") Integer clueId);

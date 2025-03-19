@@ -17,7 +17,22 @@
           :router="true"
           :unique-opened="true"
       >
-        <!--市场活动菜单-->
+        <el-sub-menu :index="index"
+                     v-for="(menu,index) in user.menuPermissionList"
+        :key="menu.id">
+          <template #title>
+            <el-icon><component :is="menu.icon"/></el-icon>
+            <span>{{ menu.name }}</span>
+          </template>
+          <el-menu-item v-for="subMenu in menu.subPermissionList"
+                        :key="subMenu.id"
+                        :index="subMenu.url">
+            <el-icon><component :is="subMenu.icon"/></el-icon>
+            {{ subMenu.name }}
+          </el-menu-item>
+        </el-sub-menu>
+
+<!--        &lt;!&ndash;市场活动菜单&ndash;&gt;
         <el-sub-menu index="1">
           <template #title>
             <el-icon><OfficeBuilding/></el-icon>
@@ -29,7 +44,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <!--线索管理菜单-->
+        &lt;!&ndash;线索管理菜单&ndash;&gt;
         <el-sub-menu index="2">
           <template #title>
             <el-icon><Operation /></el-icon>
@@ -41,7 +56,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <!--客户管理菜单-->
+        &lt;!&ndash;客户管理菜单&ndash;&gt;
         <el-sub-menu index="3">
           <template #title>
             <el-icon><Avatar /></el-icon>
@@ -53,7 +68,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <!--交易管理菜单-->
+        &lt;!&ndash;交易管理菜单&ndash;&gt;
         <el-sub-menu index="4">
           <template #title>
             <el-icon><Money /></el-icon>
@@ -65,7 +80,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <!--产品管理菜单-->
+        &lt;!&ndash;产品管理菜单&ndash;&gt;
         <el-sub-menu index="5">
           <template #title>
             <el-icon><Goods /></el-icon>
@@ -77,7 +92,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <!--字典管理菜单-->
+        &lt;!&ndash;字典管理菜单&ndash;&gt;
         <el-sub-menu index="6">
           <template #title>
             <el-icon><Reading /></el-icon>
@@ -89,7 +104,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <!--用户管理菜单-->
+        &lt;!&ndash;用户管理菜单&ndash;&gt;
         <el-sub-menu index="7">
           <template #title>
             <el-icon><User /></el-icon>
@@ -101,7 +116,7 @@
           </el-menu-item>
         </el-sub-menu>
 
-        <!--系统管理菜单-->
+        &lt;!&ndash;系统管理菜单&ndash;&gt;
         <el-sub-menu index="8">
           <template #title>
             <el-icon><Setting /></el-icon>
@@ -111,7 +126,7 @@
             <el-icon><Tools /></el-icon>
             系统管理
           </el-menu-item>
-        </el-sub-menu>
+        </el-sub-menu>-->
       </el-menu>
     </el-aside>
 
@@ -136,7 +151,7 @@
       </el-header>
       <!-- 中 -->
       <el-main>
-        <router-view v-if="isRouterAlive"/>
+        <router-view v-if="isRouterAlive" />
       </el-main>
       <!-- 下 -->
       <el-footer>@版权所有 2000-2099 王德发 山西省大同市云冈区云洲西城A区11栋</el-footer>
@@ -188,6 +203,7 @@ export default {
       doGet("/api/login/info", {}).then((rep) => {
           // console.log(rep)
         this.user = rep.data.data
+        console.log(this.user)
       })
     },
     
