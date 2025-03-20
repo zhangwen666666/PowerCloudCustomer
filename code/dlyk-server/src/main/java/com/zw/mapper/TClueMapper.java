@@ -4,6 +4,7 @@ import com.zw.annotations.AutoFill;
 import com.zw.dto.FilterSqlDTO;
 import com.zw.entity.TClue;
 import com.zw.enums.OperationType;
+import com.zw.vo.ChartStatisticDataVO;
 import com.zw.vo.ClueVO;
 import org.apache.ibatis.annotations.Select;
 
@@ -56,4 +57,12 @@ public interface TClueMapper {
 
     @Select("select count(0) from t_clue")
     int selectCount();
+
+    /**
+     * 根据线索来源分类查询线索数据
+     *
+     * @return
+     */
+    List<ChartStatisticDataVO> selectCountBySource();
+
 }

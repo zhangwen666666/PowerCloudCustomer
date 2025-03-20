@@ -155,7 +155,13 @@
     where tc.id = #{id}
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <select id="selectCountBySource" resultType="com.zw.vo.ChartStatisticDataVO">
+    select count(0) value,tdv.type_value name from t_clue tc
+    left join t_dic_value tdv on tdv.id = tc.source
+    group by tdv.type_value
+  </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_clue
     where id = #{id,jdbcType=INTEGER}
   </delete>

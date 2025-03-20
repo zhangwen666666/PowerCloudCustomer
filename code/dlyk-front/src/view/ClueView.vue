@@ -1,5 +1,5 @@
 <template>
-  <el-button type="primary" round @click="() => this.$router.push('/dashboard/clue/add')">录入线索</el-button>
+  <el-button type="primary" round @click="addClue">录入线索</el-button>
   <el-button type="success" round @click="importClue">导入线索(Excel)</el-button>
   <el-button type="danger" round @click="batchDelete">批量删除</el-button>
 
@@ -166,6 +166,10 @@ export default {
           messageTip(resp.data.msg, "error")
         }
       })
+    },
+
+    addClue(){
+      this.$router.push('/dashboard/clue/add')
     },
 
     // 线索导入(Excel)

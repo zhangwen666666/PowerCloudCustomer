@@ -23,4 +23,11 @@ public interface TTranMapper {
      * @return
      */
     BigDecimal sumTranAmount(Boolean isSuccess);
+
+    /**
+     * 查询交易数量
+     * @param isSuccess true查询成功的，false查询失败的 null查询总的
+     * @return
+     */
+    int selectCount(Boolean isSuccess);
 }

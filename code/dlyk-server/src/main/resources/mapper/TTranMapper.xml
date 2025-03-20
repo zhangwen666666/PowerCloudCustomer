@@ -38,6 +38,18 @@
     </where>
   </select>
 
+  <select id="selectCount" resultType="java.lang.Integer">
+    select count(0) from t_tran
+    <where>
+      <if test="isSuccess == true">
+        stage = 42
+      </if>
+      <if test="isSuccess == false">
+        stage != 42
+      </if>
+    </where>
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from t_tran
     where id = #{id,jdbcType=INTEGER}

@@ -179,7 +179,7 @@
 
 <script>
 import {doGet, doPost, doPut} from "../http/httpRequest.js";
-import {emitter, messageTip} from "../util/util.js";
+import {messageTip} from "../util/util.js";
 
 export default {
   name: "ClueAddView",
