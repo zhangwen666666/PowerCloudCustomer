@@ -2,7 +2,7 @@ import axios from "axios";
 import {getTokenName, messageConfirm, messageTip} from "../util/util.js";
 import {ElMessageBox} from "element-plus";
 
-axios.defaults.baseURL = "http://localhost:8089"
+axios.defaults.baseURL = "http://111.119.211.126:8089"
 
 export function doGet(url, params) {
     return axios({
